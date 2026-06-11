@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real Estate Marketplace</title>
+  <link rel="stylesheet" href="../css/tailwind.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="min-h-screen bg-gradient-to-b from-slate-50 to-indigo-50 text-slate-800">
+  <header class="sticky top-0 z-50 border-b border-white/30 bg-white/70 backdrop-blur-lg">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 md:px-6">
+      <a href="./index.html" class="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-xl font-bold text-transparent">EstateHub</a>
+      <div class="hidden items-center gap-1 text-sm font-medium md:flex">
+        <button type="button" data-mega-menu="buyers" class="mega-menu-trigger rounded-lg px-3 py-2 transition hover:bg-indigo-50">For Buyers</button>
+        <button type="button" data-mega-menu="tenants" class="mega-menu-trigger rounded-lg px-3 py-2 transition hover:bg-indigo-50">For Tenants</button>
+        <button type="button" data-mega-menu="sellers" class="mega-menu-trigger rounded-lg px-3 py-2 transition hover:bg-indigo-50">For Sellers</button>
+        <button type="button" data-mega-menu="services" class="mega-menu-trigger rounded-lg px-3 py-2 transition hover:bg-indigo-50">Services</button>
+        <button type="button" data-mega-menu="news" class="mega-menu-trigger rounded-lg px-3 py-2 transition hover:bg-indigo-50">News & Guide</button>
+      </div>
+      <div class="hidden items-center justify-end gap-2 text-sm font-medium md:flex">
+        <a data-auth="guest" class="rounded-lg px-3 py-2 transition hover:bg-indigo-50" href="./login.html">Login</a>
+        <a data-auth="guest" class="rounded-lg px-3 py-2 transition hover:bg-indigo-50" href="./register.html">Register</a>
+        <a data-auth="user" href="./profile.html" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-indigo-50">My Profile</a>
+        <a data-auth="user" data-role="buyer" class="rounded-lg px-3 py-2 transition hover:bg-indigo-50" href="./buyer-dashboard.html">Buyer Dashboard</a>
+        <a data-auth="user" data-role="seller" class="rounded-lg px-3 py-2 transition hover:bg-indigo-50" href="./seller-dashboard.html">Seller Dashboard</a>
+        <a data-auth="user" data-role="admin" class="rounded-lg px-3 py-2 transition hover:bg-indigo-50" href="./admin-panel.html">Admin Panel</a>
+        <button data-auth="user" id="logoutBtn" type="button" class="rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-3 py-2 text-white shadow-md transition hover:opacity-90">Logout</button>
+        <span id="authLinks" class="rounded-full bg-indigo-100 px-3 py-1 text-xs text-indigo-700"></span>
+      </div>
+      <button id="mobileMenuBtn" type="button" aria-label="Open mobile menu" class="md:hidden rounded-lg px-2 py-2 hover:bg-indigo-50">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+    </nav>
+    <div id="megaMenuPanel" class="mx-auto hidden max-w-5xl px-4 pb-4 md:px-6">
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-xl">
+        <div id="megaMenuContent" class="grid gap-5 md:grid-cols-4"></div>
+      </div>
+    </div>
+    <div id="mobileMenu" class="hidden max-h-0 overflow-hidden border-t border-white/30 bg-white/95 transition-all duration-300 md:hidden">
+      <div class="space-y-1 px-4 py-3 text-sm font-medium">
+        <button type="button" data-mega-menu="buyers" class="mobile-mega-menu-trigger w-full rounded-lg px-3 py-2 text-left transition hover:bg-indigo-50">For Buyers</button>
+        <button type="button" data-mega-menu="tenants" class="mobile-mega-menu-trigger w-full rounded-lg px-3 py-2 text-left transition hover:bg-indigo-50">For Tenants</button>
+        <button type="button" data-mega-menu="sellers" class="mobile-mega-menu-trigger w-full rounded-lg px-3 py-2 text-left transition hover:bg-indigo-50">For Sellers</button>
+        <button type="button" data-mega-menu="services" class="mobile-mega-menu-trigger w-full rounded-lg px-3 py-2 text-left transition hover:bg-indigo-50">Services</button>
+        <button type="button" data-mega-menu="news" class="mobile-mega-menu-trigger w-full rounded-lg px-3 py-2 text-left transition hover:bg-indigo-50">News & Guide</button>
+        <hr class="my-2 border-slate-200" />
+        <a data-auth="guest" class="block rounded-lg px-3 py-2 transition hover:bg-indigo-50" href="./login.html">Login</a>
+        <a data-auth="guest" class="block rounded-lg px-3 py-2 transition hover:bg-indigo-50" href="./register.html">Register</a>
+        <a data-auth="user" href="./profile.html" class="block rounded-lg px-3 py-2 transition hover:bg-indigo-50">My Profile</a>
+        <a data-auth="user" data-role="buyer" class="block rounded-lg px-3 py-2 transition hover:bg-indigo-50" href="./buyer-dashboard.html">Buyer Dashboard</a>
+        <a data-auth="user" data-role="seller" class="block rounded-lg px-3 py-2 transition hover:bg-indigo-50" href="./seller-dashboard.html">Seller Dashboard</a>
+        <a data-auth="user" data-role="admin" class="block rounded-lg px-3 py-2 transition hover:bg-indigo-50" href="./admin-panel.html">Admin Panel</a>
+        <button data-auth="user" id="mobileLogoutBtn" type="button" class="w-full rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-3 py-2 text-white shadow-md transition hover:opacity-90">Logout</button>
+        <div data-auth="user" class="rounded-full bg-indigo-100 px-3 py-2 text-xs text-indigo-700"><span id="mobileAuthLinks"></span></div>
+      </div>
+      <div id="mobileMegaMenuPanel" class="hidden border-t border-slate-200 px-4 py-3">
+        <div id="mobileMegaMenuContent" class="space-y-3"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-4 py-10 md:px-6">
+    <section class="hero-banner panel-card overflow-hidden rounded-[2rem] p-8 shadow-2xl">
+      <div class="mx-auto max-w-5xl space-y-6 text-center">
+        <div class="inline-flex items-center justify-center gap-3 rounded-full bg-white/12 px-5 py-3 text-sm font-semibold uppercase tracking-[0.22em] text-white/90 ring-1 ring-white/15">Trusted by thousands of home seekers</div>
+        <h1 class="text-3xl font-bold tracking-tight md:text-5xl">Find your next home with EstateHub</h1>
+        <p class="mx-auto max-w-3xl text-base text-white/80 md:text-lg">Discover curated residential and rental properties across major cities, compare listings, and connect with verified sellers quickly.</p>
+
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div class="feature-card p-5 text-left">
+            <h3 class="text-lg font-semibold">Verified Listings</h3>
+            <p class="mt-2 text-sm">Every property is reviewed for quality and accuracy.</p>
+          </div>
+          <div class="feature-card p-5 text-left">
+            <h3 class="text-lg font-semibold">Local Insights</h3>
+            <p class="mt-2 text-sm">Neighborhood info, commute times, and amenities.</p>
+          </div>
+          <div class="feature-card p-5 text-left">
+            <h3 class="text-lg font-semibold">Smart Filters</h3>
+            <p class="mt-2 text-sm">Search by budget, BHK, furnishing, and more.</p>
+          </div>
+          <div class="feature-card p-5 text-left">
+            <h3 class="text-lg font-semibold">Instant Alerts</h3>
+            <p class="mt-2 text-sm">Get notified when new properties match your needs.</p>
+          </div>
+        </div>
+
+        <div class="mx-auto flex w-full max-w-2xl flex-wrap items-center overflow-hidden rounded-[2rem] border border-white/15 bg-white/10 p-3 shadow-xl backdrop-blur-xl">
+          <div class="flex flex-1 min-w-[220px] items-center gap-3 border-r border-white/10 px-4 py-4 text-white/80">
+            <span class="text-2xl">🔍</span>
+            <div>
+              <p class="text-xs uppercase tracking-[0.24em] text-white/70">Search quickly</p>
+              <p class="text-sm font-semibold text-white">Find homes in your city</p>
+            </div>
+          </div>
+          <input id="filterKeyword" class="w-full border-0 bg-transparent px-4 py-4 text-white placeholder:text-white/60 focus:outline-none md:py-4" placeholder="Keywords (title, location, amenities)..." />
+          <input id="filterCity" class="w-full border-0 bg-transparent px-4 py-4 text-white placeholder:text-white/60 focus:outline-none md:py-4" placeholder="City or locality..." />
+          <button id="applyFilters" type="button" class="btn-primary rounded-full px-6 py-4 text-sm font-semibold shadow-lg transition hover:opacity-95">Search</button>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-2 text-sm text-white/90">
+          <button type="button" data-city="Pune" class="popular-city rounded-full bg-white/15 px-4 py-2 backdrop-blur transition hover:bg-white/25">Pune</button>
+          <button type="button" data-city="Mumbai" class="popular-city rounded-full bg-white/15 px-4 py-2 backdrop-blur transition hover:bg-white/25">Mumbai</button>
+          <button type="button" data-city="Bangalore" class="popular-city rounded-full bg-white/15 px-4 py-2 backdrop-blur transition hover:bg-white/25">Bangalore</button>
+          <button type="button" data-city="Delhi" class="popular-city rounded-full bg-white/15 px-4 py-2 backdrop-blur transition hover:bg-white/25">Delhi</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel-card mt-6 p-8 shadow-2xl">
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
+        <input id="filterMinPrice" class="rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Min Price" type="number" />
+        <input id="filterMaxPrice" class="rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Max Price" type="number" />
+        <input id="filterMinArea" class="rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Min sqft" type="number" />
+        <input id="filterMaxArea" class="rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Max sqft" type="number" />
+        <input id="filterBhk" class="rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="BHK" type="number" />
+        <select id="filterFurnishing" aria-label="Furnishing" class="rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+          <option value="">Any furnishing</option>
+          <option value="furnished">Furnished</option>
+          <option value="semi">Semi</option>
+          <option value="unfurnished">Unfurnished</option>
+        </select>
+        <select id="filterType" aria-label="Filter by property type" class="rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+          <option value="">All Types</option>
+          <option value="rent">Rent</option>
+          <option value="sale">Sale</option>
+        </select>
+        <select id="filterSortBy" aria-label="Sort properties by field" class="rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+          <option value="created_at">Latest</option>
+          <option value="price">Price</option>
+        </select>
+        <select id="filterSortOrder" aria-label="Sort properties order" class="rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+          <option value="desc">Desc</option>
+          <option value="asc">Asc</option>
+        </select>
+      </div>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button id="clearFilters" type="button" class="rounded-lg border border-indigo-200 px-4 py-2 text-sm font-medium text-indigo-700 transition hover:bg-indigo-50">Clear Filters</button>
+      </div>
+      <p id="listLoading"></p>
+      <p id="listMessage"></p>
+    </section>
+
+    <section id="propertyList" class="mt-6 min-h-[36rem] grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"></section>
+
+    <section class="panel-card mt-10 p-8 shadow-2xl md:p-8">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-2xl font-semibold">Housing's top picks</h2>
+        <a href="#propertyList" class="text-sm font-semibold text-indigo-700 hover:underline">View all</a>
+      </div>
+      <div id="topPicksList" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"></div>
+    </section>
+
+    <section class="mt-8 rounded-[2rem] bg-white/95 p-8 shadow-2xl md:p-8">
+      <div class="mb-4">
+        <h2 class="text-2xl font-semibold">High-demand projects to invest now</h2>
+        <p class="text-sm text-slate-500">Leading projects in high demand</p>
+      </div>
+      <div id="highDemandList" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
+    </section>
+
+    <section class="mt-8 rounded-[2rem] bg-white/95 p-8 shadow-2xl md:p-8">
+      <div class="mb-4">
+        <h2 class="text-2xl font-semibold">Explore by city</h2>
+        <p class="text-sm text-slate-500">Jump into curated city-level inventory</p>
+      </div>
+      <div id="cityShowcase" class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4"></div>
+    </section>
+
+    <div id="toolModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/40 p-4">
+      <div class="w-full max-w-md rounded-[2rem] bg-white/95 p-8 shadow-2xl">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 id="toolModalTitle" class="text-lg font-semibold">Calculator</h3>
+          <button type="button" id="toolModalClose" class="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100">✕</button>
+        </div>
+        <div id="toolModalBody" class="space-y-3 text-sm"></div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-center gap-3">
+      <button id="prevPage" type="button" class="rounded-lg border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-700 shadow-sm transition hover:bg-indigo-50">Prev</button>
+      <span id="pageInfo" class="rounded-full bg-indigo-100 px-4 py-2 text-sm font-semibold text-indigo-700">-</span>
+      <button id="nextPage" type="button" class="rounded-lg border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-700 shadow-sm transition hover:bg-indigo-50">Next</button>
+    </div>
+  </main>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/home.js"></script>
+</body>
+</html>

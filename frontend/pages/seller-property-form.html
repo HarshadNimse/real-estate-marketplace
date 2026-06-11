@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller Property Form</title>
+  <link rel="stylesheet" href="../css/tailwind.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <header class="sticky top-0 z-50 border-b border-white/30 bg-white/80 backdrop-blur-lg">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
+      <a href="./index.html" class="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-xl font-bold text-transparent">EstateHub</a>
+      <div class="flex items-center gap-2">
+        <a href="./seller-dashboard.html" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-indigo-50">Seller Dashboard</a>
+        <a data-auth="user" href="./profile.html" class="rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-indigo-50">My Profile</a>
+        <button id="logoutBtn" type="button" class="rounded-lg border border-indigo-200 px-3 py-2 text-sm font-medium text-indigo-700 transition hover:bg-indigo-50">Logout</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-6 py-10 md:px-8">
+    <section class="panel-card rounded-[2rem] p-10">
+      <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 id="pageTitle" class="text-3xl font-semibold text-slate-900">Create Property</h2>
+          <p class="mt-2 text-sm text-slate-600">Add a new listing with all the details buyers need to discover it fast.</p>
+        </div>
+        <div class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 ring-1 ring-indigo-100">Listing editor</div>
+      </div>
+      <form id="propertyForm" class="space-y-6">
+        <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div class="space-y-1">
+            <input id="title" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Title *" required />
+          </div>
+          <div class="space-y-1">
+            <input id="price" type="number" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Price *" required />
+            <small class="text-xs text-slate-500">Enter in INR (e.g. 5000000)</small>
+          </div>
+          <div class="space-y-1">
+            <input id="city" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="City *" required />
+          </div>
+          <input id="addressLine" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Address" />
+          <div class="space-y-1">
+            <input id="latitude" type="number" step="any" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Latitude *" required />
+            <small class="text-xs text-slate-500">Latitude must be between -90 and 90</small>
+          </div>
+          <div class="space-y-1">
+            <input id="longitude" type="number" step="any" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Longitude *" required />
+            <small class="text-xs text-slate-500">Longitude must be between -180 and 180</small>
+          </div>
+          <div class="space-y-1">
+            <select id="propertyType" aria-label="Property type" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" required>
+              <option value="rent">Rent</option>
+              <option value="sale">Sale</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <input id="bhk" type="number" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="BHK" />
+            <small class="text-xs text-slate-500">BHK range: 1-20 only</small>
+          </div>
+          <div class="space-y-1">
+            <input id="areaSqft" type="number" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Area (sqft) *" required />
+          </div>
+          <select id="furnishing" aria-label="Furnishing type" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+            <option value="unfurnished">Unfurnished</option>
+            <option value="semi">Semi</option>
+            <option value="furnished">Furnished</option>
+          </select>
+        </div>
+        <div class="mt-4 space-y-1">
+          <textarea id="description" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Description *" required></textarea>
+        </div>
+        <fieldset class="mt-4 rounded-xl border border-slate-200 p-4">
+          <legend class="px-1 text-sm font-semibold text-slate-700">Amenities</legend>
+          <div id="amenitiesCheckboxes" class="mt-2 grid grid-cols-2 gap-2 text-sm md:grid-cols-3">
+            <label class="flex items-center gap-2"><input type="checkbox" class="amenity-cb" value="Lift" /> Lift</label>
+            <label class="flex items-center gap-2"><input type="checkbox" class="amenity-cb" value="Parking" /> Parking</label>
+            <label class="flex items-center gap-2"><input type="checkbox" class="amenity-cb" value="Power Backup" /> Power Backup</label>
+            <label class="flex items-center gap-2"><input type="checkbox" class="amenity-cb" value="Gym" /> Gym</label>
+            <label class="flex items-center gap-2"><input type="checkbox" class="amenity-cb" value="Swimming Pool" /> Swimming Pool</label>
+            <label class="flex items-center gap-2"><input type="checkbox" class="amenity-cb" value="Security" /> Security</label>
+            <label class="flex items-center gap-2"><input type="checkbox" class="amenity-cb" value="Garden" /> Garden</label>
+            <label class="flex items-center gap-2"><input type="checkbox" class="amenity-cb" value="Club House" /> Club House</label>
+          </div>
+          <input id="amenityOther" class="mt-3 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" placeholder="Other (comma-separated)" />
+        </fieldset>
+        <div class="drop-zone mt-4 p-6 text-center cursor-pointer" id="dropZone">
+          <input id="images" title="Upload property images" type="file" accept="image/*" multiple class="hidden" />
+          <div class="flex flex-col items-center gap-2">
+            <svg class="h-10 w-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <p class="text-sm font-medium text-slate-700">Drop images here or <span class="text-indigo-600 underline">browse</span></p>
+            <p class="text-xs text-slate-400">Up to 10 images · Max 5 MB each · JPG, PNG, WebP</p>
+          </div>
+        </div>
+        <div id="existingImages" class="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3"></div>
+        <div id="imagePreview" class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3"></div>
+        <button id="submitBtn" class="mt-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-5 py-2.5 font-semibold text-white shadow-md transition hover:opacity-90" type="submit">Create Property</button>
+      </form>
+      <p id="formLoading"></p>
+      <p id="formMessage"></p>
+    </section>
+  </main>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    // Enforce authentication and role-based access
+    (function() {
+      const user = auth.getUser();
+      if (!user || user.role !== 'seller') {
+        window.location.href = './login.html';
+      }
+    })();
+  </script>
+  <script src="../js/seller-property-form.js"></script>
+</body>
+</html>

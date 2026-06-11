@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register</title>
+  <link rel="stylesheet" href="../css/tailwind.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="min-h-screen px-4 py-10 text-white auth-background">
+  <main class="mx-auto max-w-md px-2">
+    <section class="mx-auto rounded-[2rem] auth-panel p-10">
+      <h2 class="text-2xl font-semibold">Create Account</h2>
+      <p class="mt-1 text-sm text-indigo-100">Join as buyer or seller in minutes.</p>
+      <form id="registerForm">
+        <div class="mt-5 space-y-4">
+          <input id="fullName" placeholder="Full Name" required class="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-indigo-200 focus:border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-200/50" />
+          <input id="email" type="email" placeholder="Email" required class="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-indigo-200 focus:border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-200/50" />
+          <input id="phone" placeholder="Phone" class="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-indigo-200 focus:border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-200/50" />
+          <input id="password" type="password" placeholder="Password" required class="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-indigo-200 focus:border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-200/50" />
+          <select id="role" required title="Select your role" class="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white focus:border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-200/50">
+            <option class="text-slate-800" value="buyer">Buyer</option>
+            <option class="text-slate-800" value="seller">Seller</option>
+          </select>
+          <button class="w-full rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 px-4 py-3 font-semibold text-white shadow-lg transition hover:opacity-90" type="submit">Create Account</button>
+        </div>
+      </form>
+      <p id="loadingState"></p>
+      <p id="formMessage"></p>
+      <p class="mt-4 text-sm text-indigo-100">Already have account? <a class="font-semibold text-white underline" href="./login.html">Login</a></p>
+    </section>
+  </main>
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/register.js"></script>
+</body>
+</html>

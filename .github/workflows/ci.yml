@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: real_estate_marketplace
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - name: Import schema
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot real_estate_marketplace < database/schema.sql
+          mysql -h 127.0.0.1 -uroot -proot real_estate_marketplace < database/seed.sql || true
+        env:
+          MYSQL_PWD: root
+      - name: Unit tests
+        run: npm test
+        env:
+          JWT_SECRET: ci_test_secret_at_least_32_characters_long
+      - name: Start API and smoke test
+        run: |
+          npm start &
+          sleep 5
+          npm run smoke
+        env:
+          JWT_SECRET: ci_test_secret_at_least_32_characters_long
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: root
+          DB_NAME: real_estate_marketplace
