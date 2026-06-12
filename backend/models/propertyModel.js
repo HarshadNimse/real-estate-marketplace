@@ -287,6 +287,34 @@ async function listPropertiesBySellerId(sellerId, pagination = {}, executor) {
   return { rows, total };
 }
 
+async function getSellerDashboardStats(sellerId, executor) {
+  const db = getExecutor(executor);
+  const [propertyRows] = await db.execute(
+    `SELECT
+       SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) AS activeListings,
+       SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pendingProperties
+     FROM properties
+     WHERE seller_id = ? AND deleted_at IS NULL`,
+    [sellerId]
+  );
+  const [inquiryRows] = await db.execute(
+    `SELECT
+       COUNT(*) AS totalInquiries,
+       SUM(CASE WHEN i.status <> 'open' THEN 1 ELSE 0 END) AS respondedInquiries
+     FROM inquiries i
+     INNER JOIN properties p ON p.id = i.property_id
+     WHERE i.seller_id = ? AND p.deleted_at IS NULL`,
+    [sellerId]
+  );
+
+  return {
+    activeListings: Number(propertyRows[0].activeListings || 0),
+    pendingProperties: Number(propertyRows[0].pendingProperties || 0),
+    totalInquiries: Number(inquiryRows[0].totalInquiries || 0),
+    respondedInquiries: Number(inquiryRows[0].respondedInquiries || 0),
+  };
+}
+
 async function listAdminProperties(filters, executor) {
   const db = getExecutor(executor);
   const whereClauses = ["p.deleted_at IS NULL"];
@@ -337,5 +365,6 @@ module.exports = {
   updatePropertyStatus,
   listPublicProperties,
   listPropertiesBySellerId,
+  getSellerDashboardStats,
   listAdminProperties,
 };

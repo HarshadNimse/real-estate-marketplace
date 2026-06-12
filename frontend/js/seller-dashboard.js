@@ -109,6 +109,21 @@ async function loadSellerInquiries() {
   }
 }
 
+async function loadSellerStats() {
+  try {
+    const response = await api.request("/properties/mine/stats");
+    const stats = response.data || {};
+    ui.setText("sellerStatActive", Number(stats.activeListings || 0).toLocaleString("en-IN"));
+    ui.setText("sellerStatPending", Number(stats.pendingProperties || 0).toLocaleString("en-IN"));
+    ui.setText("sellerStatResponse", `${Number(stats.responseRate || 0)}%`);
+  } catch (error) {
+    ["sellerStatActive", "sellerStatPending", "sellerStatResponse"].forEach((id) =>
+      ui.setText(id, "—")
+    );
+    console.warn("Failed to load seller stats:", error.message);
+  }
+}
+
 document.getElementById("sellerInbox")?.addEventListener("click", async (event) => {
   const btn = event.target.closest(".seller-inquiry-action");
   if (!btn) return;
@@ -125,7 +140,7 @@ document.getElementById("sellerInbox")?.addEventListener("click", async (event) 
       body: JSON.stringify({ status: nextStatus }),
     });
     ui.showToast(nextStatus === "responded" ? "Marked as responded." : "Inquiry closed.", "success");
-    await loadSellerInquiries();
+    await Promise.all([loadSellerInquiries(), loadSellerStats()]);
   } catch (error) {
     ui.showToast(error.message, "error");
   } finally {
@@ -163,7 +178,7 @@ document.getElementById("myProperties")?.addEventListener("click", async (event)
   try {
     await api.request(`/properties/${propertyId}`, { method: "DELETE" });
     ui.showToast("Property deleted successfully.", "success");
-    await loadMyProperties();
+    await Promise.all([loadMyProperties(), loadSellerStats()]);
   } catch (error) {
     ui.showToast(error.message, "error");
   } finally {
@@ -176,6 +191,7 @@ document.getElementById("myProperties")?.addEventListener("click", async (event)
   const user = auth.requireAuth(["seller"]);
   if (!user) return;
   ui.setText("sellerName", user.full_name);
+  loadSellerStats();
   loadMyProperties();
   loadSellerInquiries();
 })();

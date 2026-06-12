@@ -8,6 +8,7 @@ const {
   deleteProperty,
   updatePropertyStatus,
   getMyPropertyListings,
+  getMyPropertyDashboardStats,
   getAdminProperties,
   deletePropertyImage,
 } = require("../controllers/propertyController");
@@ -18,6 +19,7 @@ const { upload } = require("../middlewares/uploadMiddleware");
 const propertyRouter = express.Router();
 
 propertyRouter.get("/", getProperties);
+propertyRouter.get("/mine/stats", requireAuth, requireRole("seller"), getMyPropertyDashboardStats);
 propertyRouter.get("/mine", requireAuth, requireRole("seller"), getMyPropertyListings);
 propertyRouter.get("/admin/all", requireAuth, requireRole("admin"), getAdminProperties);
 propertyRouter.get("/slug/:slug", attachUserIfPresent, getPropertyBySlug);

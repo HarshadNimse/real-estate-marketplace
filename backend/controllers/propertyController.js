@@ -7,6 +7,7 @@ const {
   softDeletePropertyListing,
   adminUpdatePropertyStatus,
   getMyProperties,
+  getMyPropertyStats,
   getAdminPropertyListings,
   deletePropertyImageListing,
 } = require("../services/propertyService");
@@ -133,6 +134,19 @@ async function getMyPropertyListings(req, res, next) {
   }
 }
 
+async function getMyPropertyDashboardStats(req, res, next) {
+  try {
+    const data = await getMyPropertyStats(req.user);
+    return res.status(200).json({
+      success: true,
+      message: "Seller dashboard stats fetched successfully.",
+      data,
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 async function getAdminProperties(req, res, next) {
   try {
     const data = await getAdminPropertyListings(req.user, req.query);
@@ -173,6 +187,7 @@ module.exports = {
   deleteProperty,
   updatePropertyStatus,
   getMyPropertyListings,
+  getMyPropertyDashboardStats,
   getAdminProperties,
   deletePropertyImage,
 };

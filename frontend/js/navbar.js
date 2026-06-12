@@ -2,6 +2,9 @@
   const user = auth.getCurrentUser();
   const role = user?.role || null;
 
+  const nameSpan = document.getElementById("authLinks");
+  if (nameSpan && user) nameSpan.textContent = `${user.full_name} (${user.role})`;
+
   document.querySelectorAll("[data-auth='guest']").forEach((el) => {
     el.style.display = user ? "none" : "";
   });

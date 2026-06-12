@@ -321,12 +321,16 @@ async function loadProperties() {
   try {
     const query = api.buildQuery(collectFilters());
     const response = await api.request(`/properties?${query}`);
-    const data = response.data;
-    state.total = data.pagination.total;
-    state.latestProperties = data.properties || [];
-    document.getElementById("propertyList").innerHTML = data.properties.length
-      ? data.properties.map(ui.propertyCard).join("")
+    const data = response.data || {};
+    const properties = Array.isArray(data.properties) ? data.properties : [];
+    state.total = Number(data.pagination?.total || properties.length);
+    state.latestProperties = properties;
+    document.getElementById("propertyList").innerHTML = properties.length
+      ? properties.map(ui.propertyCard).join("")
       : `<p class="col-span-full rounded-xl bg-white p-6 text-center text-sm text-slate-500 shadow">No properties found. Try adjusting filters.</p>`;
+    renderTopPicks(properties);
+    renderHighDemand(properties);
+    renderCityShowcase(properties);
     const currentUser = auth.getUser();
     document.querySelectorAll(".list-fav-btn").forEach((btn) => {
       btn.classList.toggle("hidden", !currentUser || currentUser.role !== "buyer");
@@ -334,9 +338,6 @@ async function loadProperties() {
     if (currentUser?.role === "buyer") {
       await syncListFavouriteButtons();
     }
-    renderTopPicks(state.latestProperties);
-    renderHighDemand(state.latestProperties);
-    renderCityShowcase(state.latestProperties);
     if (state.total === 0) ui.setText("pageInfo", "Showing 0 of 0");
     else {
       ui.setText(

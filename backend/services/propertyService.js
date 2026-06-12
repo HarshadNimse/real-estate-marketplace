@@ -9,6 +9,7 @@ const {
   updatePropertyStatus,
   listPublicProperties,
   listPropertiesBySellerId,
+  getSellerDashboardStats,
   listAdminProperties,
 } = require("../models/propertyModel");
 const {
@@ -260,6 +261,17 @@ async function getMyProperties(user, query = {}) {
   };
 }
 
+async function getMyPropertyStats(user) {
+  if (user.role !== "seller") {
+    throw createError("Only sellers can access seller stats.", 403);
+  }
+  const stats = await getSellerDashboardStats(user.id);
+  const responseRate = stats.totalInquiries
+    ? Math.round((stats.respondedInquiries / stats.totalInquiries) * 100)
+    : 0;
+  return { ...stats, responseRate };
+}
+
 async function getAdminPropertyListings(user, query) {
   if (user.role !== "admin") {
     throw createError("Only admins can access all properties.", 403);
@@ -331,6 +343,7 @@ module.exports = {
   softDeletePropertyListing,
   adminUpdatePropertyStatus,
   getMyProperties,
+  getMyPropertyStats,
   getAdminPropertyListings,
   deletePropertyImageListing,
 };

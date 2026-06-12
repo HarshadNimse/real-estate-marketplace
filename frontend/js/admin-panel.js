@@ -333,7 +333,7 @@ document.getElementById("userNext")?.addEventListener("click", () => {
   const user = auth.requireAuth(["admin"]);
   if (!user) return;
   ui.setText("adminName", user.full_name);
-  loadAdminProperties();
   loadStats();
+  loadAdminProperties();
   loadUsers();
 })();

@@ -83,7 +83,7 @@ function propertyCard(item) {
         <p class="text-xl font-bold text-purple-700">INR ${Number(item.price).toLocaleString("en-IN")}</p>
         <p class="text-sm text-slate-600">${escapeHtml(item.city)}</p>
         <div class="flex flex-wrap gap-2">
-          ${item.bhk ? `<span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">${escapeHtml(item.bhk)} BHK</span>` : ``}
+          ${item.bhk != null && item.bhk !== "" ? `<span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">${escapeHtml(item.bhk)} BHK</span>` : ``}
           <span class="rounded-full bg-purple-50 px-3 py-1 text-xs font-medium text-purple-700">${escapeHtml(item.property_type)}</span>
         </div>
         <div class="flex items-center justify-between gap-2">

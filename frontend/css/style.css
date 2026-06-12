@@ -38,6 +38,37 @@ body {
               linear-gradient(180deg, #f8fafc 0%, #eef1f8 48%, #fcf6ed 100%);
 }
 
+.site-footer {
+  width: 100%;
+  margin-top: 3rem;
+  padding: 2rem 1rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.96);
+  color: #cbd5e1;
+  text-align: center;
+}
+
+.site-footer__inner {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.site-footer__brand {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-footer p {
+  margin: 0.35rem 0 0;
+  font-size: 0.875rem;
+}
+
+.site-footer__copyright {
+  color: #94a3b8;
+}
+
 img, svg {
   max-width: 100%;
   display: block;
