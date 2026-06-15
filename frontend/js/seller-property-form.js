@@ -1,38 +1,3 @@
-const FIELD_IDS = [
-  "title",
-  "description",
-  "price",
-  "city",
-  "latitude",
-  "longitude",
-  "propertyType",
-  "bhk",
-  "areaSqft",
-];
-
-function clearFieldErrors() {
-  FIELD_IDS.forEach((id) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove("border-rose-400");
-    const err = el.nextElementSibling;
-    if (err?.classList?.contains("field-err")) err.remove();
-  });
-}
-
-function markFieldError(fieldId, message) {
-  const el = document.getElementById(fieldId);
-  if (!el) return;
-  el.classList.add("border-rose-400");
-  let span = el.nextElementSibling;
-  if (!span?.classList?.contains("field-err")) {
-    span = document.createElement("span");
-    span.className = "field-err mt-1 block text-xs text-rose-600";
-    el.insertAdjacentElement("afterend", span);
-  }
-  span.textContent = message;
-}
-
 function collectAmenities() {
   const selected = Array.from(document.querySelectorAll(".amenity-cb:checked")).map(
     (el) => el.value
@@ -66,46 +31,39 @@ function formToPayload() {
   };
 }
 
-function validateForm(payload) {
-  clearFieldErrors();
-  const errors = [];
+function validateForm(payload, isEdit) {
+  if (
+    !payload.title ||
+    !payload.description ||
+    !payload.price ||
+    !payload.city ||
+    !payload.latitude ||
+    !payload.longitude ||
+    !payload.property_type ||
+    !payload.bhk ||
+    !payload.area_sqft
+  ) {
+    throw new Error("Please fill all required fields.");
+  }
 
-  if (!payload.title) errors.push({ field: "title", message: "Title is required." });
-  if (!payload.description) errors.push({ field: "description", message: "Description is required." });
-  if (!payload.price && payload.price !== 0) errors.push({ field: "price", message: "Price is required." });
-  if (!payload.city) errors.push({ field: "city", message: "City is required." });
-  if (!payload.latitude) errors.push({ field: "latitude", message: "Latitude is required." });
-  if (!payload.longitude) errors.push({ field: "longitude", message: "Longitude is required." });
-  if (!payload.property_type) errors.push({ field: "propertyType", message: "Property type is required." });
-  if (!payload.area_sqft) errors.push({ field: "areaSqft", message: "Area is required." });
-
-  if (payload.price !== "" && Number(payload.price) < 0) {
-    errors.push({ field: "price", message: "Price must be >= 0." });
+  if (Number(payload.price) < 0) throw new Error("Price must be greater than or equal to 0.");
+  if (Number(payload.latitude) < -90 || Number(payload.latitude) > 90) {
+    throw new Error("Latitude must be between -90 and 90.");
   }
-  if (payload.latitude !== "" && (Number(payload.latitude) < -90 || Number(payload.latitude) > 90)) {
-    errors.push({ field: "latitude", message: "Latitude must be between -90 and 90." });
+  if (Number(payload.longitude) < -180 || Number(payload.longitude) > 180) {
+    throw new Error("Longitude must be between -180 and 180.");
   }
-  if (payload.longitude !== "" && (Number(payload.longitude) < -180 || Number(payload.longitude) > 180)) {
-    errors.push({ field: "longitude", message: "Longitude must be between -180 and 180." });
+  if (!Number.isInteger(Number(payload.bhk)) || Number(payload.bhk) < 1 || Number(payload.bhk) > 20) {
+    throw new Error("BHK must be an integer between 1 and 20.");
   }
-  const bhkNum = Number(payload.bhk);
-  if (payload.bhk !== "" && (!Number.isInteger(bhkNum) || bhkNum < 1 || bhkNum > 20)) {
-    errors.push({ field: "bhk", message: "BHK must be an integer between 1 and 20." });
-  }
-  const areaNum = Number(payload.area_sqft);
-  if (payload.area_sqft !== "" && (!Number.isInteger(areaNum) || areaNum < 100)) {
-    errors.push({ field: "areaSqft", message: "Area must be an integer >= 100." });
+  if (!Number.isInteger(Number(payload.area_sqft)) || Number(payload.area_sqft) < 100) {
+    throw new Error("Area (sqft) must be an integer greater than or equal to 100.");
   }
   try {
     const amenities = JSON.parse(payload.amenities || "[]");
-    if (!Array.isArray(amenities)) throw new Error("invalid");
-  } catch {
-    errors.push({ field: "amenityOther", message: "Amenities could not be parsed." });
-  }
-
-  errors.forEach(({ field, message }) => markFieldError(field, message));
-  if (errors.length) {
-    throw new Error(errors[0].message);
+    if (!Array.isArray(amenities)) throw new Error("amenities must be array");
+  } catch (error) {
+    throw new Error("Amenities could not be parsed.");
   }
 }
 
@@ -172,7 +130,7 @@ function setupImagePreview() {
       const url = URL.createObjectURL(file);
       preview.innerHTML += `
         <div class="relative group">
-          <img loading="lazy" class="gallery-img h-28 w-full rounded-xl object-cover shadow-sm" src="${url}" alt="preview ${
+          <img class="gallery-img h-28 w-full rounded-xl object-cover shadow-sm" src="${url}" alt="preview ${
             idx + 1
           }">
           ${
@@ -206,55 +164,18 @@ function fillForm(property) {
   setAmenitiesFromProperty(property);
 }
 
-function renderExistingImages(propertyId, images) {
-  const root = document.getElementById("existingImages");
-  if (!root) return;
-  const e = ui.escapeHtml;
-  root.innerHTML = images.length
-    ? images
-        .map(
-          (img) => `
-        <div class="relative" data-image-id="${Number(img.id)}">
-          <img loading="lazy" class="h-28 w-full rounded-xl object-cover shadow-sm" src="${ui.safeImageSrc(img.image_url)}" alt="existing image">
-          ${
-            Number(img.is_primary) === 1
-              ? '<span class="absolute top-1 left-1 rounded-full bg-indigo-600 px-2 py-0.5 text-xs font-semibold text-white">Primary</span>'
-              : ""
-          }
-          <button type="button" class="delete-existing-img absolute bottom-1 right-1 rounded-lg bg-rose-600 px-2 py-1 text-xs font-semibold text-white hover:bg-rose-500" data-img-id="${Number(
-            img.id
-          )}">Delete</button>
-        </div>`
-        )
-        .join("")
-    : `<p class="col-span-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500">No existing images.</p>`;
-
-  root.querySelectorAll(".delete-existing-img").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const imgId = Number(btn.dataset.imgId);
-      if (!imgId || !window.confirm("Delete this image?")) return;
-      const prev = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = "…";
-      try {
-        const res = await api.request(`/properties/${propertyId}/images/${imgId}`, {
-          method: "DELETE",
-        });
-        renderExistingImages(propertyId, res.data?.images || []);
-        ui.showToast("Image deleted.", "success");
-      } catch (err) {
-        ui.showToast(err.message, "error");
-        btn.disabled = false;
-        btn.textContent = prev;
-      }
-    });
-  });
-}
-
 async function loadEditData(propertyId) {
   const response = await api.request(`/properties/${propertyId}`);
   fillForm(response.data.property);
-  renderExistingImages(propertyId, response.data.images || []);
+  const images = response.data.images || [];
+  document.getElementById("existingImages").innerHTML = images.length
+    ? images
+        .map(
+          (img) =>
+            `<img class="h-28 w-full rounded-xl object-cover shadow-sm" src="${ui.safeImageSrc(img.image_url)}" alt="existing image">`
+        )
+        .join("")
+    : `<p class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500">No existing images.</p>`;
 }
 
 async function submitForm(event, propertyId) {
@@ -265,11 +186,12 @@ async function submitForm(event, propertyId) {
 
   try {
     const payload = formToPayload();
-    validateForm(payload);
+    validateForm(payload, isEdit);
 
     const formData = new FormData();
     Object.entries(payload).forEach(([key, value]) => formData.append(key, value));
-
+    
+    // Add images if any are selected
     const files = document.getElementById("images").files;
     if (files && files.length > 0) {
       Array.from(files).forEach((file) => formData.append("images", file));

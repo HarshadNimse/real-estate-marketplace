@@ -199,16 +199,29 @@ async function main() {
 
     console.log("\n🧹 Cleaning up test data...");
     try {
-      if (property?.id) {
+      if (result.inquiry?.data?.id) {
         await request(
-          `/properties/${property.id}`,
+          `/inquiries/${result.inquiry.data.id}`,
+          { method: "DELETE", token: buyerToken },
+          "Delete test inquiry"
+        );
+        console.log("✅ Test inquiry deleted");
+      }
+    } catch (e) {
+      console.log("ℹ️ Inquiry cleanup skipped");
+    }
+
+    try {
+      if (result.property?.data?.id) {
+        await request(
+          `/properties/${result.property.data.id}`,
           { method: "DELETE", token: sellerToken },
           "Delete test property"
         );
         console.log("✅ Test property deleted");
       }
     } catch (e) {
-      console.log("ℹ️ Property cleanup skipped:", e.message);
+      console.log("ℹ️ Property cleanup skipped");
     }
 
     console.log("\n✅ Smoke E2E passed.");

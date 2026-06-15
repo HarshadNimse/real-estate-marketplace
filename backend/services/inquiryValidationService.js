@@ -55,9 +55,18 @@ function normalizePagination(query) {
   return { limit, offset };
 }
 
+function normalizeCreateMessagePayload(body) {
+  const message = String(body.message || "").trim();
+  if (!message) {
+    throw createValidationError("Message content is required.");
+  }
+  return { message };
+}
+
 module.exports = {
   normalizeCreateInquiryPayload,
   normalizeInquiryStatusPayload,
   parseInquiryId,
   normalizePagination,
+  normalizeCreateMessagePayload,
 };

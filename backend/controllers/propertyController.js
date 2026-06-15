@@ -7,9 +7,7 @@ const {
   softDeletePropertyListing,
   adminUpdatePropertyStatus,
   getMyProperties,
-  getMyPropertyStats,
   getAdminPropertyListings,
-  deletePropertyImageListing,
 } = require("../services/propertyService");
 
 function parsePropertyId(rawId) {
@@ -134,43 +132,12 @@ async function getMyPropertyListings(req, res, next) {
   }
 }
 
-async function getMyPropertyDashboardStats(req, res, next) {
-  try {
-    const data = await getMyPropertyStats(req.user);
-    return res.status(200).json({
-      success: true,
-      message: "Seller dashboard stats fetched successfully.",
-      data,
-    });
-  } catch (error) {
-    return next(error);
-  }
-}
-
 async function getAdminProperties(req, res, next) {
   try {
     const data = await getAdminPropertyListings(req.user, req.query);
     return res.status(200).json({
       success: true,
       message: "Admin properties fetched successfully.",
-      data,
-    });
-  } catch (error) {
-    return next(error);
-  }
-}
-
-async function deletePropertyImage(req, res, next) {
-  try {
-    const propertyId = parsePropertyId(req.params.id);
-    const imageId = Number(req.params.imgId);
-    if (!Number.isInteger(imageId) || imageId <= 0) {
-      return res.status(400).json({ success: false, message: "Invalid image id." });
-    }
-    const data = await deletePropertyImageListing(propertyId, imageId, req.user);
-    return res.status(200).json({
-      success: true,
-      message: "Image deleted successfully.",
       data,
     });
   } catch (error) {
@@ -187,7 +154,5 @@ module.exports = {
   deleteProperty,
   updatePropertyStatus,
   getMyPropertyListings,
-  getMyPropertyDashboardStats,
   getAdminProperties,
-  deletePropertyImage,
 };

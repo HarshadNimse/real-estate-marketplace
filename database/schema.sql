@@ -38,7 +38,6 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
   user_id BIGINT UNSIGNED NOT NULL,
   token_hash VARCHAR(255) NOT NULL,
   expires_at TIMESTAMP NOT NULL,
-  used_at TIMESTAMP NULL DEFAULT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_refresh_tokens_user
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -92,7 +91,7 @@ CREATE TABLE properties (
   longitude DECIMAL(11, 8) NOT NULL,
 
   property_type ENUM('rent', 'sale') NOT NULL,
-  bhk TINYINT UNSIGNED NULL,
+  bhk TINYINT UNSIGNED NOT NULL,
 
   area_sqft INT UNSIGNED NOT NULL,
 

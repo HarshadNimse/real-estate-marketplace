@@ -7,6 +7,9 @@ const {
   updateInquiryStatus,
   getSellerInbox,
   getBuyerHistory,
+  createMessage,
+  getMessages,
+  updateInquiryLastMessageAt,
 } = require("../models/inquiryModel");
 const {
   normalizeCreateInquiryPayload,
@@ -161,9 +164,75 @@ async function updateInquiryStatusByRole(user, inquiryIdRaw, body) {
   return { inquiry: updatedInquiry };
 }
 
+async function createInquiryMessage(user, inquiryIdRaw, messageText) {
+  const inquiryId = parseInquiryId(inquiryIdRaw);
+  const inquiry = await findInquiryById(inquiryId);
+  if (!inquiry) {
+    throw createError("Inquiry not found.", 404);
+  }
+
+  const isSeller = Number(inquiry.seller_id) === Number(user.id);
+  const isBuyer = Number(inquiry.buyer_id) === Number(user.id);
+
+  if (!isSeller && !isBuyer) {
+    throw createError("You do not have permission to post messages to this inquiry.", 403);
+  }
+
+  if (inquiry.status === "closed") {
+    throw createError("Cannot send messages to a closed inquiry.", 400);
+  }
+
+  const connection = await pool.getConnection();
+  let messageId;
+  try {
+    await connection.beginTransaction();
+
+    messageId = await createMessage(inquiryId, user.id, messageText, connection);
+
+    // If seller is responding and status is 'open', advance to 'responded'
+    if (isSeller && inquiry.status === "open") {
+      await updateInquiryStatus(inquiryId, "responded", connection);
+    } else {
+      await updateInquiryLastMessageAt(inquiryId, connection);
+    }
+
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+
+  const messages = await getMessages(inquiryId);
+  // Find the exact message we just inserted
+  const newMessage = messages.find(m => Number(m.id) === Number(messageId)) || messages[messages.length - 1];
+  return newMessage;
+}
+
+async function getMessagesByInquiry(user, inquiryIdRaw) {
+  const inquiryId = parseInquiryId(inquiryIdRaw);
+  const inquiry = await findInquiryById(inquiryId);
+  if (!inquiry) {
+    throw createError("Inquiry not found.", 404);
+  }
+
+  const isSeller = Number(inquiry.seller_id) === Number(user.id);
+  const isBuyer = Number(inquiry.buyer_id) === Number(user.id);
+
+  if (!isSeller && !isBuyer) {
+    throw createError("You do not have permission to view messages for this inquiry.", 403);
+  }
+
+  const messages = await getMessages(inquiryId);
+  return { messages };
+}
+
 module.exports = {
   createPropertyInquiry,
   getSellerInquiries,
   getBuyerInquiries,
   updateInquiryStatusByRole,
+  createInquiryMessage,
+  getMessagesByInquiry,
 };

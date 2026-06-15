@@ -42,8 +42,7 @@ if (env.bcryptSaltRounds < 10) {
 
 if (!env.jwt.secret || env.jwt.secret.length < 32) {
   throw new Error(
-    "JWT_SECRET must be set in .env and be at least 32 cryptographically random characters. " +
-      "Generate one with: node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
+    "JWT_SECRET must be set in .env and be at least 32 characters long."
   );
 }
 

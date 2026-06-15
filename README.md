@@ -715,13 +715,6 @@ If your DB was created before search/verification features:
 mysql -u root -p real_estate_marketplace < database/migrations/phase2_features.sql
 ```
 
-### Docker (optional)
-
-```bash
-docker compose up --build
-```
-
-API on port 5000, MySQL on 3306 (schema + seed auto-loaded on first start).
 
 ### Security note
 

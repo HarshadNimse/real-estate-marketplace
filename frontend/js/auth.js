@@ -12,24 +12,9 @@ function getUser() {
 
 function setSession(data) {
   const token = data.accessToken || data.token;
-  const set =
-    window.api?.safeStorageSet ||
-    ((key, value) => {
-      try {
-        localStorage.setItem(key, value);
-        return true;
-      } catch {
-        return false;
-      }
-    });
-  let ok = true;
-  if (token) ok = set(window.APP_CONFIG.TOKEN_KEY, token) && ok;
-  if (data.refreshToken) ok = set("refreshToken", data.refreshToken) && ok;
-  if (data.user) ok = set(window.APP_CONFIG.USER_KEY, JSON.stringify(data.user)) && ok;
-  if (!ok) {
-    console.warn("Session could not be saved to localStorage (quota or privacy mode).");
-  }
-  return ok;
+  if (token) localStorage.setItem(window.APP_CONFIG.TOKEN_KEY, token);
+  if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
+  if (data.user) localStorage.setItem(window.APP_CONFIG.USER_KEY, JSON.stringify(data.user));
 }
 
 function clearSession() {

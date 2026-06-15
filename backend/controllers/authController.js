@@ -174,15 +174,7 @@ async function refreshToken(req, res, next) {
         .status(400)
         .json({ success: false, message: "refreshToken is required." });
     }
-    let result;
-    try {
-      result = await rotateRefreshToken(raw);
-    } catch (error) {
-      if (error.code === "TOKEN_REUSE") {
-        return res.status(401).json({ success: false, message: error.message });
-      }
-      throw error;
-    }
+    const result = await rotateRefreshToken(raw);
     if (!result) {
       return res
         .status(401)

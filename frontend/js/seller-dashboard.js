@@ -2,10 +2,14 @@ const sellerState = { limit: 10, offset: 0, total: 0 };
 const sellerPropsState = { limit: 8, offset: 0, total: 0 };
 
 function sellerInquiryActions(item) {
-  if (item.status === "closed") return "";
+  const chatButton = `<button type="button" class="seller-chat-inquiry rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100" data-inquiry-id="${item.id}" data-title="${ui.escapeHtml(item.property_title)}" data-buyer="${ui.escapeHtml(item.buyer_name)}" data-status="${item.status}">Chat</button>`;
+  if (item.status === "closed") {
+    return `<div class="mt-3 flex flex-wrap gap-2">${chatButton}</div>`;
+  }
   if (item.status === "open") {
     return `
     <div class="mt-3 flex flex-wrap gap-2">
+      ${chatButton}
       <button type="button" class="seller-inquiry-action rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 transition hover:bg-emerald-100" data-inquiry-id="${item.id}" data-next-status="responded">Mark responded</button>
       <button type="button" class="seller-inquiry-action rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50" data-inquiry-id="${item.id}" data-next-status="closed">Close</button>
     </div>`;
@@ -13,6 +17,7 @@ function sellerInquiryActions(item) {
   if (item.status === "responded") {
     return `
     <div class="mt-3 flex flex-wrap gap-2">
+      ${chatButton}
       <button type="button" class="seller-inquiry-action rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50" data-inquiry-id="${item.id}" data-next-status="closed">Close</button>
     </div>`;
   }
@@ -109,23 +114,19 @@ async function loadSellerInquiries() {
   }
 }
 
-async function loadSellerStats() {
-  try {
-    const response = await api.request("/properties/mine/stats");
-    const stats = response.data || {};
-    ui.setText("sellerStatActive", Number(stats.activeListings || 0).toLocaleString("en-IN"));
-    ui.setText("sellerStatPending", Number(stats.pendingProperties || 0).toLocaleString("en-IN"));
-    ui.setText("sellerStatResponse", `${Number(stats.responseRate || 0)}%`);
-  } catch (error) {
-    ["sellerStatActive", "sellerStatPending", "sellerStatResponse"].forEach((id) =>
-      ui.setText(id, "—")
-    );
-    console.warn("Failed to load seller stats:", error.message);
-  }
-}
-
 document.getElementById("sellerInbox")?.addEventListener("click", async (event) => {
   const btn = event.target.closest(".seller-inquiry-action");
+  const chatBtn = event.target.closest(".seller-chat-inquiry");
+
+  if (chatBtn) {
+    const inquiryId = Number(chatBtn.dataset.inquiryId);
+    const title = chatBtn.dataset.title;
+    const buyer = chatBtn.dataset.buyer;
+    const status = chatBtn.dataset.status;
+    openChatModal(inquiryId, title, buyer, status);
+    return;
+  }
+
   if (!btn) return;
   const inquiryId = Number(btn.dataset.inquiryId);
   const nextStatus = btn.dataset.nextStatus;
@@ -140,12 +141,114 @@ document.getElementById("sellerInbox")?.addEventListener("click", async (event) 
       body: JSON.stringify({ status: nextStatus }),
     });
     ui.showToast(nextStatus === "responded" ? "Marked as responded." : "Inquiry closed.", "success");
-    await Promise.all([loadSellerInquiries(), loadSellerStats()]);
+    await loadSellerInquiries();
   } catch (error) {
     ui.showToast(error.message, "error");
   } finally {
     btn.disabled = false;
     btn.textContent = prev;
+  }
+});
+
+let activeInquiryId = null;
+let chatInterval = null;
+let activeInquiryStatus = null;
+
+function openChatModal(inquiryId, title, secondPartyName, status) {
+  activeInquiryId = inquiryId;
+  activeInquiryStatus = status;
+  
+  const modal = document.getElementById("chatModal");
+  document.getElementById("chatTitle").textContent = title;
+  document.getElementById("chatSubtitle").textContent = `Chatting with buyer: ${secondPartyName}`;
+  
+  const chatForm = document.getElementById("chatForm");
+  const chatInput = document.getElementById("chatInput");
+  
+  if (status === "closed") {
+    chatInput.disabled = true;
+    chatInput.placeholder = "Inquiry is closed. Read-only history.";
+    chatForm.querySelector("button[type='submit']").disabled = true;
+  } else {
+    chatInput.disabled = false;
+    chatInput.placeholder = "Type your message...";
+    chatForm.querySelector("button[type='submit']").disabled = false;
+  }
+  
+  modal.classList.remove("hidden");
+  
+  loadChatMessages();
+  clearInterval(chatInterval);
+  chatInterval = setInterval(loadChatMessages, 4000);
+}
+
+function closeChatModal() {
+  document.getElementById("chatModal").classList.add("hidden");
+  activeInquiryId = null;
+  clearInterval(chatInterval);
+}
+
+document.getElementById("closeChatBtn")?.addEventListener("click", closeChatModal);
+
+async function loadChatMessages() {
+  if (!activeInquiryId) return;
+  try {
+    const res = await api.request(`/inquiries/${activeInquiryId}/messages`);
+    const messages = res.data.messages || [];
+    const chatContainer = document.getElementById("chatMessages");
+    const e = ui.escapeHtml;
+    const currentUser = auth.getUser();
+    
+    chatContainer.innerHTML = messages.length
+      ? messages.map(msg => {
+          const isMe = Number(msg.sender_id) === Number(currentUser.id);
+          const alignClass = isMe ? "justify-end" : "justify-start";
+          const bgClass = isMe ? "bg-indigo-600 text-white rounded-br-none" : "bg-slate-200 text-slate-800 rounded-bl-none";
+          return `
+            <div class="flex ${alignClass}">
+              <div class="max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm ${bgClass}">
+                ${isMe ? "" : `<div class="text-[10px] font-semibold opacity-75 mb-1">${e(msg.sender_name)}</div>`}
+                <div class="break-words">${e(msg.message)}</div>
+                <div class="text-[9px] text-right mt-1 opacity-60">${new Date(msg.created_at).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' })}</div>
+              </div>
+            </div>
+          `;
+        }).join("")
+      : `<div class="text-center py-8 text-xs text-slate-400">No messages yet. Send a message to start the conversation!</div>`;
+      
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  } catch (err) {
+    console.error("Failed to load messages:", err.message);
+  }
+}
+
+document.getElementById("chatForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!activeInquiryId || activeInquiryStatus === "closed") return;
+  
+  const input = document.getElementById("chatInput");
+  const msgText = input.value.trim();
+  if (!msgText) return;
+  
+  const submitBtn = event.target.querySelector("button[type='submit']");
+  submitBtn.disabled = true;
+  input.disabled = true;
+  
+  try {
+    await api.request(`/inquiries/${activeInquiryId}/messages`, {
+      method: "POST",
+      body: JSON.stringify({ message: msgText }),
+    });
+    input.value = "";
+    await loadChatMessages();
+    
+    if (window.loadSellerInquiries) loadSellerInquiries();
+  } catch (err) {
+    ui.showToast(err.message, "error");
+  } finally {
+    submitBtn.disabled = false;
+    input.disabled = false;
+    input.focus();
   }
 });
 
@@ -178,7 +281,7 @@ document.getElementById("myProperties")?.addEventListener("click", async (event)
   try {
     await api.request(`/properties/${propertyId}`, { method: "DELETE" });
     ui.showToast("Property deleted successfully.", "success");
-    await Promise.all([loadMyProperties(), loadSellerStats()]);
+    await loadMyProperties();
   } catch (error) {
     ui.showToast(error.message, "error");
   } finally {
@@ -191,7 +294,6 @@ document.getElementById("myProperties")?.addEventListener("click", async (event)
   const user = auth.requireAuth(["seller"]);
   if (!user) return;
   ui.setText("sellerName", user.full_name);
-  loadSellerStats();
   loadMyProperties();
   loadSellerInquiries();
 })();

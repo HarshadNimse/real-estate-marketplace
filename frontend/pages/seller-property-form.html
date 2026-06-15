@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Seller Property Form &mdash; EstateHub</title>
-  <link rel="stylesheet" href="../css/tailwind.css" />
+  <title>Seller Property Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900">
-  <header class="sticky top-0 z-50 border-b border-white/30 bg-white/80 backdrop-blur-lg">
+<body class="min-h-screen bg-gradient-to-b from-slate-50 to-indigo-50 text-slate-800">
+  <header class="sticky top-0 z-50 border-b border-white/30 bg-white/70 backdrop-blur-lg">
     <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
       <a href="./index.html" class="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-xl font-bold text-transparent">EstateHub</a>
       <div class="flex items-center gap-2">
@@ -19,16 +19,10 @@
     </nav>
   </header>
 
-  <main class="mx-auto max-w-6xl px-6 py-10 md:px-8">
-    <section class="panel-card rounded-[2rem] p-10">
-      <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2 id="pageTitle" class="text-3xl font-semibold text-slate-900">Create Property</h2>
-          <p class="mt-2 text-sm text-slate-600">Add a new listing with all the details buyers need to discover it fast.</p>
-        </div>
-        <div class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 ring-1 ring-indigo-100">Listing editor</div>
-      </div>
-      <form id="propertyForm" class="space-y-6">
+  <main class="mx-auto max-w-4xl px-4 py-6 md:px-6">
+    <section class="rounded-2xl bg-white p-5 shadow-md md:p-6">
+      <h2 id="pageTitle" class="text-2xl font-semibold">Create Property</h2>
+      <form id="propertyForm">
         <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div class="space-y-1">
             <input id="title" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Title *" required />
@@ -37,9 +31,7 @@
             <input id="price" type="number" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Price *" required />
             <small class="text-xs text-slate-500">Enter in INR (e.g. 5000000)</small>
           </div>
-          <div class="space-y-1">
-            <input id="city" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="City *" required />
-          </div>
+          <input id="city" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="City *" required />
           <input id="addressLine" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Address" />
           <div class="space-y-1">
             <input id="latitude" type="number" step="any" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Latitude *" required />
@@ -49,28 +41,22 @@
             <input id="longitude" type="number" step="any" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Longitude *" required />
             <small class="text-xs text-slate-500">Longitude must be between -180 and 180</small>
           </div>
+          <select id="propertyType" aria-label="Property type" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" required>
+            <option value="rent">Rent</option>
+            <option value="sale">Sale</option>
+          </select>
           <div class="space-y-1">
-            <select id="propertyType" aria-label="Property type" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" required>
-              <option value="rent">Rent</option>
-              <option value="sale">Sale</option>
-            </select>
-          </div>
-          <div class="space-y-1">
-            <input id="bhk" type="number" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="BHK" />
+            <input id="bhk" type="number" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="BHK *" required />
             <small class="text-xs text-slate-500">BHK range: 1-20 only</small>
           </div>
-          <div class="space-y-1">
-            <input id="areaSqft" type="number" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Area (sqft) *" required />
-          </div>
+          <input id="areaSqft" type="number" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Area (sqft) *" required />
           <select id="furnishing" aria-label="Furnishing type" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200">
             <option value="unfurnished">Unfurnished</option>
             <option value="semi">Semi</option>
             <option value="furnished">Furnished</option>
           </select>
         </div>
-        <div class="mt-4 space-y-1">
-          <textarea id="description" class="w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Description *" required></textarea>
-        </div>
+        <textarea id="description" class="mt-4 w-full rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Description *" required></textarea>
         <fieldset class="mt-4 rounded-xl border border-slate-200 p-4">
           <legend class="px-1 text-sm font-semibold text-slate-700">Amenities</legend>
           <div id="amenitiesCheckboxes" class="mt-2 grid grid-cols-2 gap-2 text-sm md:grid-cols-3">
@@ -106,8 +92,8 @@
   <script src="../js/config.js"></script>
   <script src="../js/api.js"></script>
   <script src="../js/auth.js"></script>
-  <script src="../js/navbar.js"></script>
   <script src="../js/ui.js"></script>
+  <script src="../js/navbar.js"></script>
   <script>
     // Enforce authentication and role-based access
     (function() {
@@ -118,12 +104,5 @@
     })();
   </script>
   <script src="../js/seller-property-form.js"></script>
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <a class="site-footer__brand" href="./index.html">EstateHub</a>
-      <p>Real Estate Marketplace Demo</p>
-      <p class="site-footer__copyright">&copy; 2026 EstateHub. All rights reserved.</p>
-    </div>
-  </footer>
 </body>
 </html>

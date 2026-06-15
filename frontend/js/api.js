@@ -8,20 +8,6 @@ function buildQuery(params) {
   return search.toString();
 }
 
-function safeStorageSet(key, value) {
-  try {
-    localStorage.setItem(key, value);
-    return true;
-  } catch (err) {
-    if (err && (err.name === "QuotaExceededError" || err.code === 22)) {
-      console.warn("localStorage quota exceeded for key:", key);
-    } else {
-      console.warn("localStorage setItem failed:", err);
-    }
-    return false;
-  }
-}
-
 let isLoggingOut = false;
 let isRefreshing = false;
 
@@ -71,7 +57,8 @@ async function apiRequest(path, options = {}) {
       path.startsWith("/auth/register") ||
       path.startsWith("/auth/refresh") ||
       path.startsWith("/auth/logout");
-
+    
+    // Try to refresh token if not already refreshing
     if (!skipRefresh && !isRefreshing) {
       const refreshToken = localStorage.getItem("refreshToken");
       if (refreshToken) {
@@ -99,19 +86,15 @@ async function apiRequest(path, options = {}) {
       }
     }
 
+    // Logout only if not already logging out and not an auth endpoint
     const skipAutoLogout = path.startsWith("/auth/login") || path.startsWith("/auth/register");
     if (!skipAutoLogout && !isLoggingOut && window.auth && typeof window.auth.logout === "function") {
       isLoggingOut = true;
       window.auth.logout("./login.html");
-      setTimeout(() => {
-        isLoggingOut = false;
-      }, 3000);
-      const logoutError = new Error("Session expired. Please login again.");
-      logoutError.status = 401;
-      logoutError.payload = payload;
-      throw logoutError;
+      // Prevent throwing error after logout is initiated
+      return;
     }
-
+    
     const error = new Error(
       skipAutoLogout ? payload.message || "Invalid credentials." : "Session expired. Please login again."
     );
@@ -123,11 +106,8 @@ async function apiRequest(path, options = {}) {
 
   if (!response.ok) {
     let message = payload.message || "Request failed.";
-    if (response.status === 403) {
-      message = payload.message || "You are not authorized to perform this action.";
-    } else if (response.status === 404) {
-      message = payload.message || "Requested resource was not found.";
-    }
+    if (response.status === 403) message = "You are not authorized to perform this action.";
+    if (response.status === 404) message = "Requested resource was not found.";
 
     const error = new Error(message);
     error.status = response.status;
@@ -142,5 +122,4 @@ async function apiRequest(path, options = {}) {
 window.api = {
   buildQuery,
   request: apiRequest,
-  safeStorageSet,
 };

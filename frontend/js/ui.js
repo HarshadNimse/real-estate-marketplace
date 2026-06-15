@@ -77,49 +77,24 @@ function propertyCard(item) {
   const slugUrl = `./property.html?slug=${encodeURIComponent(item.slug || "")}`;
   return `
     <article class="property-card group overflow-hidden rounded-xl bg-white shadow-md transition duration-300 hover:scale-[1.02] hover:shadow-lg">
-      <img loading="lazy" src="${image}" alt="${escapeHtml(item.title)}" class="h-48 w-full object-cover" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMAGE}';" />
+      <img src="${image}" alt="${escapeHtml(item.title)}" class="h-48 w-full object-cover" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMAGE}';" />
       <div class="space-y-2 p-4">
         <h3 class="line-clamp-1 text-lg font-semibold text-slate-800">${escapeHtml(item.title)}</h3>
         <p class="text-xl font-bold text-purple-700">INR ${Number(item.price).toLocaleString("en-IN")}</p>
         <p class="text-sm text-slate-600">${escapeHtml(item.city)}</p>
         <div class="flex flex-wrap gap-2">
-          ${item.bhk != null && item.bhk !== "" ? `<span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">${escapeHtml(item.bhk)} BHK</span>` : ``}
+          <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">${escapeHtml(item.bhk)} BHK</span>
           <span class="rounded-full bg-purple-50 px-3 py-1 text-xs font-medium text-purple-700">${escapeHtml(item.property_type)}</span>
         </div>
         <div class="flex items-center justify-between gap-2">
           <a class="inline-flex items-center rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:opacity-90" href="${slugUrl}">View Details</a>
           <button type="button" class="list-fav-btn rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-rose-300 hover:text-rose-600" data-property-id="${Number(
             item.id
-          )}" data-fav="false">♡ Save</button>
+          )}">♡ Save</button>
         </div>
       </div>
     </article>
   `;
-}
-
-function propertySkeletonCard() {
-  return `
-    <article class="property-card animate-pulse overflow-hidden rounded-xl bg-white shadow-sm">
-      <div class="h-48 w-full bg-slate-200"></div>
-      <div class="space-y-4 p-4">
-        <div class="h-6 w-3/4 rounded-full bg-slate-200"></div>
-        <div class="h-8 w-1/2 rounded-full bg-slate-200"></div>
-        <div class="h-4 w-1/3 rounded-full bg-slate-200"></div>
-        <div class="flex flex-wrap gap-2">
-          <div class="h-8 w-16 rounded-full bg-slate-200"></div>
-          <div class="h-8 w-24 rounded-full bg-slate-200"></div>
-        </div>
-        <div class="flex items-center justify-between gap-2">
-          <div class="h-10 w-24 rounded-full bg-slate-200"></div>
-          <div class="h-10 w-12 rounded-full bg-slate-200"></div>
-        </div>
-      </div>
-    </article>
-  `;
-}
-
-function propertySkeletons(count = 6) {
-  return Array.from({ length: count }, () => propertySkeletonCard()).join("");
 }
 
 window.ui = {
@@ -128,7 +103,6 @@ window.ui = {
   setLoading,
   showToast,
   propertyCard,
-  propertySkeletons,
   escapeHtml,
   safeImageSrc,
   PLACEHOLDER_IMAGE,

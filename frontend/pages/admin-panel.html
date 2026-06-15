@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Panel &mdash; EstateHub</title>
-  <link rel="stylesheet" href="../css/tailwind.css" />
+  <title>Admin Dashboard — EstateHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body class="min-h-screen bg-gradient-to-b from-slate-50 to-indigo-50 text-slate-800">
-  <header class="sticky top-0 z-50 border-b border-white/30 bg-white/70 backdrop-blur-lg">
+  <header class="sticky top-0 z-40 border-b border-white/30 bg-white/70 backdrop-blur-lg">
     <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
       <a href="./index.html" class="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-xl font-bold text-transparent">EstateHub</a>
       <div class="flex items-center gap-2">
@@ -19,27 +19,127 @@
     </nav>
   </header>
 
-  <main class="mx-auto max-w-7xl px-6 py-10 md:px-10">
-    <section class="dashboard-panel rounded-[2rem] bg-gradient-to-br from-indigo-700 via-violet-600 to-slate-900 p-8 text-white shadow-2xl shadow-indigo-500/10 md:p-12">
-      <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-        <div class="max-w-2xl space-y-3">
-          <div class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-slate-100 ring-1 ring-white/15">Admin Panel</div>
-          <div>
-            <h1 class="text-3xl font-semibold tracking-tight">Welcome back, <span id="adminName" class="text-white">Admin</span></h1>
-            <p class="mt-2 max-w-xl text-slate-200">Review listings, manage users, and keep the marketplace running smoothly from a single dashboard.</p>
+  <main class="mx-auto max-w-7xl px-4 py-6 md:px-6">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight text-slate-900">Admin Dashboard</h1>
+        <p class="mt-1 text-sm text-slate-500">Welcome, <strong id="adminName" class="text-indigo-600">Admin</strong></p>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="mt-6 border-b border-slate-200">
+      <nav class="flex gap-6" aria-label="Tabs">
+        <button id="tabBtnStats" class="tab-btn border-indigo-600 text-indigo-600 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-semibold transition-all focus:outline-none" data-tab="stats">
+          Dashboard Stats & Settings
+        </button>
+        <button id="tabBtnModeration" class="tab-btn border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-semibold transition-all focus:outline-none" data-tab="moderation">
+          Property Moderation
+        </button>
+        <button id="tabBtnUsers" class="tab-btn border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-semibold transition-all focus:outline-none" data-tab="users">
+          User Management
+        </button>
+      </nav>
+    </div>
+
+    <!-- Tab 1: Dashboard Stats & Settings -->
+    <section id="tabPanelStats" class="tab-panel mt-6 space-y-6">
+      <!-- Stats Cards Grid -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Users</span>
+            <span class="rounded-lg bg-indigo-50 p-2 text-indigo-600">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </span>
           </div>
+          <div id="statUsers" class="mt-2 text-3xl font-bold text-slate-900">-</div>
         </div>
-        <div class="flex flex-wrap gap-3">
-          <button id="refreshAdmin" type="button" class="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15">Refresh dashboard</button>
-          <span class="inline-flex items-center rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-slate-100">API: localhost:5000</span>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Listings</span>
+            <span class="rounded-lg bg-amber-50 p-2 text-amber-600">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </span>
+          </div>
+          <div id="statPending" class="mt-2 text-3xl font-bold text-slate-900">-</div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Properties</span>
+            <span class="rounded-lg bg-emerald-50 p-2 text-emerald-600">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+            </span>
+          </div>
+          <div id="statProperties" class="mt-2 text-3xl font-bold text-slate-900">-</div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Inquiries</span>
+            <span class="rounded-lg bg-purple-50 p-2 text-purple-600">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </span>
+          </div>
+          <div id="statInquiries" class="mt-2 text-3xl font-bold text-slate-900">-</div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Property Views</span>
+            <span class="rounded-lg bg-slate-100 p-2 text-slate-600">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </span>
+          </div>
+          <div id="statViews" class="mt-2 text-3xl font-bold text-slate-900">-</div>
         </div>
       </div>
-      <div class="mt-6 grid gap-4 sm:grid-cols-3">
-        <div class="rounded-3xl bg-white/10 p-4 shadow-xl shadow-slate-950/10 ring-1 ring-white/10">
-          <p class="text-xs uppercase tracking-[0.24em] text-slate-200/80">Property status</p>
-          <p class="mt-3 text-sm text-slate-200">Filter the admin approval queue and inspect ongoing moderation activity.</p>
-          <div class="mt-4">
-            <select id="statusFilter" aria-label="Filter properties by status" class="w-full rounded-2xl border border-white/20 bg-slate-950/20 px-4 py-3 text-sm text-white outline-none transition focus:border-white/40 focus:ring-2 focus:ring-white/10">
+
+      <!-- Settings Panel -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="border-b border-slate-100 pb-4">
+          <h3 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+            <svg class="h-5 w-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Platform Settings
+          </h3>
+          <p class="text-sm text-slate-500 mt-1">Configure standard percentage commissions and parameters stored directly in the database.</p>
+        </div>
+        <div class="mt-4 max-w-sm space-y-4">
+          <div>
+            <label for="commissionInput" class="block text-sm font-medium text-slate-700">Platform Commission Fee</label>
+            <div class="relative mt-1.5">
+              <input id="commissionInput" type="number" step="0.1" min="0" max="100" class="w-full rounded-xl border border-slate-200 pl-4 pr-12 py-2.5 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100" placeholder="5.0" />
+              <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-sm font-semibold text-slate-400">%</span>
+            </div>
+          </div>
+          <button id="saveSettingsBtn" type="button" class="w-full rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 py-3 text-sm font-semibold text-white shadow hover:opacity-90 transition">Save Settings</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Property Moderation -->
+    <section id="tabPanelModeration" class="tab-panel mt-6 hidden space-y-6">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200 md:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h2 class="text-xl font-semibold text-slate-800">Property Listings Review</h2>
+          <div class="max-w-xs">
+            <select id="statusFilter" aria-label="Filter properties by status" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none">
               <option value="">All Status</option>
               <option value="pending">Pending</option>
               <option value="approved">Approved</option>
@@ -47,61 +147,100 @@
             </select>
           </div>
         </div>
-        <div class="rounded-3xl bg-white/10 p-4 shadow-xl shadow-slate-950/10 ring-1 ring-white/10">
-          <p class="text-xs uppercase tracking-[0.24em] text-slate-200/80">Refresh status</p>
-          <p id="adminLoading" class="mt-3 text-sm text-slate-200/80"></p>
-          <p id="adminMessage" class="text-sm text-rose-200"></p>
+        <p id="adminLoading" class="mt-4 text-sm text-slate-500"></p>
+        <p id="adminMessage" class="mt-4 text-sm text-slate-500"></p>
+        <ul id="adminPropertyList" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"></ul>
+        <div class="mt-6 flex justify-between items-center border-t border-slate-100 pt-4">
+          <span class="text-xs text-slate-500" id="propsPaginationInfo">Showing properties...</span>
+          <div class="flex gap-2">
+            <button id="adminPrev" type="button" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium transition hover:bg-slate-50 disabled:opacity-40">Prev</button>
+            <button id="adminNext" type="button" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium transition hover:bg-slate-50 disabled:opacity-40">Next</button>
+          </div>
         </div>
-        <div class="rounded-3xl bg-white/10 p-4 shadow-xl shadow-slate-950/10 ring-1 ring-white/10">
-          <p class="text-xs uppercase tracking-[0.24em] text-slate-200/80">Tip</p>
-          <p class="mt-3 text-sm text-slate-200">Use the approve/reject actions to keep listings clean. The refresh button updates all dashboard sections instantly.</p>
-        </div>
-      </div>
-      <ul id="adminPropertyList" class="mt-6 space-y-4"></ul>
-      <div class="mt-6 flex flex-wrap gap-3">
-        <button id="adminPrev" type="button" class="rounded-2xl border border-white/15 bg-white/10 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/15">Prev</button>
-        <button id="adminNext" type="button" class="rounded-2xl border border-white/15 bg-white/10 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/15">Next</button>
       </div>
     </section>
 
-    <section class="dashboard-panel mt-8 rounded-[2rem] bg-white/95 p-6 shadow-2xl shadow-slate-900/5 md:p-8">
-      <div class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 class="text-xl font-semibold text-slate-900">User management</h2>
-          <p id="userCount" class="mt-2 text-sm text-slate-500">Showing active users on the marketplace.</p>
+    <!-- Tab 3: User Management -->
+    <section id="tabPanelUsers" class="tab-panel mt-6 hidden space-y-6">
+      <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200 md:p-6">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h2 class="text-xl font-semibold text-slate-800">User accounts management</h2>
+          <div class="flex gap-2">
+            <input id="userSearch" type="text" placeholder="Search name or email..." class="rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none" />
+            <select id="roleFilter" aria-label="Filter users by role" class="rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none">
+              <option value="">All roles</option>
+              <option value="buyer">Buyers</option>
+              <option value="seller">Sellers</option>
+            </select>
+          </div>
         </div>
-        <div class="flex flex-wrap items-center gap-3">
-          <input id="userSearch" type="text" placeholder="Search name or email..." class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
-          <select id="roleFilter" aria-label="Filter users by role" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
-            <option value="">All roles</option>
-            <option value="buyer">Buyers</option>
-            <option value="seller">Sellers</option>
-          </select>
+        <p id="userLoading" class="text-sm text-slate-500"></p>
+        <ul id="userList" class="space-y-3"></ul>
+        <div class="mt-6 flex justify-between items-center border-t border-slate-100 pt-4">
+          <span class="text-xs text-slate-500" id="usersPaginationInfo">Showing users...</span>
+          <div class="flex gap-2">
+            <button id="userPrev" type="button" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium transition hover:bg-slate-50 disabled:opacity-40">Prev</button>
+            <button id="userNext" type="button" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium transition hover:bg-slate-50 disabled:opacity-40">Next</button>
+          </div>
         </div>
       </div>
-      <p id="userLoading" class="text-sm text-indigo-600"></p>
-      <ul id="userList" class="space-y-3"></ul>
-      <div class="mt-4 flex flex-wrap gap-3">
-        <button id="userPrev" type="button" class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:opacity-40">Prev</button>
-        <button id="userNext" type="button" class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:opacity-40">Next</button>
-      </div>
-    </section>
-
-    <section class="mt-6 grid grid-cols-2 gap-4 rounded-[2rem] bg-white/95 p-8 shadow-2xl sm:grid-cols-3 lg:grid-cols-5">
-      <div class="dashboard-summary-card bg-indigo-50 p-4 text-center"><div id="statUsers" class="text-2xl font-bold text-indigo-700">-</div><div class="mt-1 text-xs text-indigo-500">Total users</div></div>
-      <div class="dashboard-summary-card bg-amber-50 p-4 text-center"><div id="statPending" class="text-2xl font-bold text-amber-700">-</div><div class="mt-1 text-xs text-amber-500">Pending listings</div></div>
-      <div class="dashboard-summary-card bg-emerald-50 p-4 text-center"><div id="statProperties" class="text-2xl font-bold text-emerald-700">-</div><div class="mt-1 text-xs text-emerald-500">Total properties</div></div>
-      <div class="dashboard-summary-card bg-purple-50 p-4 text-center"><div id="statInquiries" class="text-2xl font-bold text-purple-700">-</div><div class="mt-1 text-xs text-purple-500">Total inquiries</div></div>
-      <div class="dashboard-summary-card bg-slate-50 p-4 text-center"><div id="statViews" class="text-2xl font-bold text-slate-700">-</div><div class="mt-1 text-xs text-slate-500">Property views</div></div>
     </section>
   </main>
+
+  <!-- Detailed Moderation Review Modal -->
+  <div id="reviewModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="relative w-full max-w-3xl rounded-2xl bg-white shadow-xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+        <h3 class="text-lg font-bold text-slate-800">Review Listing Details</h3>
+        <button id="closeModalBtn" type="button" class="text-slate-400 hover:text-slate-600 transition">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-6 space-y-6">
+        <div id="modalLoading" class="text-center py-12 text-slate-500 font-medium">Loading details...</div>
+        <div id="modalContent" class="hidden space-y-6">
+          <div>
+            <h4 id="modalTitle" class="text-2xl font-bold text-slate-800"></h4>
+            <p id="modalPrice" class="text-xl font-semibold text-indigo-600 mt-1"></p>
+            <div id="modalMeta" class="flex flex-wrap gap-3 mt-2 text-sm text-slate-500"></div>
+          </div>
+          <!-- Image Gallery -->
+          <div>
+            <h5 class="text-sm font-semibold text-slate-700 mb-2">Listing Images</h5>
+            <div id="modalGallery" class="grid grid-cols-2 gap-3 sm:grid-cols-3"></div>
+          </div>
+          <!-- Description -->
+          <div>
+            <h5 class="text-sm font-semibold text-slate-700">Description</h5>
+            <p id="modalDescription" class="text-sm leading-relaxed text-slate-600 mt-1.5 whitespace-pre-line"></p>
+          </div>
+          <!-- Amenities -->
+          <div>
+            <h5 class="text-sm font-semibold text-slate-700">Amenities</h5>
+            <ul id="modalAmenities" class="mt-2 grid grid-cols-2 gap-2 text-sm text-slate-600 list-disc pl-5"></ul>
+          </div>
+          <!-- Seller Info -->
+          <div class="rounded-xl bg-slate-50 p-4 border border-slate-200/50">
+            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-500">Seller Information</h5>
+            <div id="modalSeller" class="mt-1 text-sm text-slate-600 space-y-1"></div>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-slate-100 bg-slate-50 px-6 py-4 flex justify-end gap-3">
+        <button id="modalRejectBtn" type="button" class="rounded-xl border border-rose-200 bg-rose-50 px-5 py-2.5 text-sm font-semibold text-rose-700 hover:bg-rose-100 transition">Reject Listing</button>
+        <button id="modalApproveBtn" type="button" class="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-emerald-500 transition">Approve Listing</button>
+      </div>
+    </div>
+  </div>
+
   <script src="../js/config.js"></script>
   <script src="../js/api.js"></script>
   <script src="../js/auth.js"></script>
-  <script src="../js/navbar.js"></script>
   <script src="../js/ui.js"></script>
+  <script src="../js/navbar.js"></script>
   <script>
-    // Enforce authentication and role-based access
     (function() {
       const user = auth.getUser();
       if (!user || user.role !== 'admin') {
@@ -110,12 +249,5 @@
     })();
   </script>
   <script src="../js/admin-panel.js"></script>
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <a class="site-footer__brand" href="./index.html">EstateHub</a>
-      <p>Real Estate Marketplace Demo</p>
-      <p class="site-footer__copyright">&copy; 2026 EstateHub. All rights reserved.</p>
-    </div>
-  </footer>
 </body>
 </html>

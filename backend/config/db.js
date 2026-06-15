@@ -13,19 +13,11 @@ const pool = mysql.createPool({
 });
 
 async function testDbConnection() {
+  const connection = await pool.getConnection();
   try {
-    const connection = await pool.getConnection();
-    try {
-      await connection.ping();
-    } finally {
-      connection.release();
-    }
-  } catch (error) {
-    const hint =
-      error.code === "ECONNREFUSED"
-        ? " Is MySQL running? Import database/schema.sql then set DB_* in .env."
-        : "";
-    throw new Error(`${error.message || "Database connection failed."}${hint}`);
+    await connection.ping();
+  } finally {
+    connection.release();
   }
 }
 

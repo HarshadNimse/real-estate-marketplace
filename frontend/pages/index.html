@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home &mdash; EstateHub</title>
-  <link rel="stylesheet" href="../css/tailwind.css" />
+  <title>Real Estate Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body class="min-h-screen bg-gradient-to-b from-slate-50 to-indigo-50 text-slate-800">
@@ -28,7 +28,7 @@
         <button data-auth="user" id="logoutBtn" type="button" class="rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-3 py-2 text-white shadow-md transition hover:opacity-90">Logout</button>
         <span id="authLinks" class="rounded-full bg-indigo-100 px-3 py-1 text-xs text-indigo-700"></span>
       </div>
-      <button id="mobileMenuBtn" type="button" aria-label="Open mobile menu" class="md:hidden rounded-lg px-2 py-2 hover:bg-indigo-50">
+      <button id="mobileMenuBtn" type="button" class="md:hidden rounded-lg px-2 py-2 hover:bg-indigo-50">
         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
         </svg>
@@ -62,55 +62,36 @@
     </div>
   </header>
 
-  <main class="mx-auto max-w-7xl px-4 py-10 md:px-6">
-    <section class="hero-banner panel-card overflow-hidden rounded-[2rem] p-8 shadow-2xl">
-      <div class="mx-auto max-w-5xl space-y-6 text-center">
-        <div class="inline-flex items-center justify-center gap-3 rounded-full bg-white/12 px-5 py-3 text-sm font-semibold uppercase tracking-[0.22em] text-white/90 ring-1 ring-white/15">Trusted by thousands of home seekers</div>
-        <h1 class="text-3xl font-bold tracking-tight md:text-5xl">Find your next home with EstateHub</h1>
-        <p class="mx-auto max-w-3xl text-base text-white/80 md:text-lg">Discover curated residential and rental properties across major cities, compare listings, and connect with verified sellers quickly.</p>
+  <main class="mx-auto max-w-7xl px-4 py-6 md:px-6">
+    <section class="overflow-hidden rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-700 p-8 text-white shadow-lg">
+      <div class="mx-auto max-w-4xl space-y-6 text-center">
+        <h1 class="text-3xl font-bold md:text-5xl">Find Your Dream Property</h1>
+        <p class="text-base text-indigo-100 md:text-lg">Browse verified homes, compare prices, and connect directly with owners.</p>
 
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <div class="feature-card p-5 text-left">
-            <h3 class="text-lg font-semibold">Verified Listings</h3>
-            <p class="mt-2 text-sm">Every property is reviewed for quality and accuracy.</p>
-          </div>
-          <div class="feature-card p-5 text-left">
-            <h3 class="text-lg font-semibold">Local Insights</h3>
-            <p class="mt-2 text-sm">Neighborhood info, commute times, and amenities.</p>
-          </div>
-          <div class="feature-card p-5 text-left">
-            <h3 class="text-lg font-semibold">Smart Filters</h3>
-            <p class="mt-2 text-sm">Search by budget, BHK, furnishing, and more.</p>
-          </div>
-          <div class="feature-card p-5 text-left">
-            <h3 class="text-lg font-semibold">Instant Alerts</h3>
-            <p class="mt-2 text-sm">Get notified when new properties match your needs.</p>
-          </div>
+        <div class="mx-auto flex max-w-xl flex-wrap justify-center gap-2">
+          <button type="button" data-tab="sale" class="tab-btn rounded-full bg-white px-4 py-2 text-sm font-semibold text-indigo-700 shadow">Buy</button>
+          <button type="button" data-tab="rent" class="tab-btn rounded-full bg-indigo-400/40 px-4 py-2 text-sm font-semibold text-white">Rent</button>
+          <button type="button" class="rounded-full bg-indigo-400/40 px-4 py-2 text-sm font-semibold text-white">Commercial</button>
+          <button type="button" class="rounded-full bg-indigo-400/40 px-4 py-2 text-sm font-semibold text-white">PG</button>
         </div>
 
-        <div class="mx-auto flex w-full max-w-2xl flex-wrap items-center overflow-hidden rounded-[2rem] border border-white/15 bg-white/10 p-3 shadow-xl backdrop-blur-xl">
-          <div class="flex flex-1 min-w-[220px] items-center gap-3 border-r border-white/10 px-4 py-4 text-white/80">
-            <span class="text-2xl">🔍</span>
-            <div>
-              <p class="text-xs uppercase tracking-[0.24em] text-white/70">Search quickly</p>
-              <p class="text-sm font-semibold text-white">Find homes in your city</p>
-            </div>
-          </div>
-          <input id="filterKeyword" class="w-full border-0 bg-transparent px-4 py-4 text-white placeholder:text-white/60 focus:outline-none md:py-4" placeholder="Keywords (title, location, amenities)..." />
-          <input id="filterCity" class="w-full border-0 bg-transparent px-4 py-4 text-white placeholder:text-white/60 focus:outline-none md:py-4" placeholder="City or locality..." />
-          <button id="applyFilters" type="button" class="btn-primary rounded-full px-6 py-4 text-sm font-semibold shadow-lg transition hover:opacity-95">Search</button>
+        <div class="mx-auto flex w-full max-w-2xl items-center overflow-hidden rounded-xl bg-white shadow-lg">
+          <span class="px-4 text-slate-400">🔍</span>
+          <input id="filterKeyword" class="w-full border-0 px-2 py-2 text-slate-700 focus:outline-none md:py-4" placeholder="Keywords (title, description)..." />
+          <input id="filterCity" class="w-full border-0 border-t border-slate-100 px-2 py-2 text-slate-700 focus:outline-none md:border-t-0 md:py-4" placeholder="City or locality..." />
+          <button id="applyFilters" type="button" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 text-sm font-semibold text-white">Search</button>
         </div>
 
-        <div class="flex flex-wrap justify-center gap-2 text-sm text-white/90">
-          <button type="button" data-city="Pune" class="popular-city rounded-full bg-white/15 px-4 py-2 backdrop-blur transition hover:bg-white/25">Pune</button>
-          <button type="button" data-city="Mumbai" class="popular-city rounded-full bg-white/15 px-4 py-2 backdrop-blur transition hover:bg-white/25">Mumbai</button>
-          <button type="button" data-city="Bangalore" class="popular-city rounded-full bg-white/15 px-4 py-2 backdrop-blur transition hover:bg-white/25">Bangalore</button>
-          <button type="button" data-city="Delhi" class="popular-city rounded-full bg-white/15 px-4 py-2 backdrop-blur transition hover:bg-white/25">Delhi</button>
+        <div class="flex flex-wrap justify-center gap-2 text-sm">
+          <button type="button" data-city="Pune" class="popular-city rounded-full bg-white/20 px-4 py-1 backdrop-blur transition hover:bg-white/30">Pune</button>
+          <button type="button" data-city="Mumbai" class="popular-city rounded-full bg-white/20 px-4 py-1 backdrop-blur transition hover:bg-white/30">Mumbai</button>
+          <button type="button" data-city="Bangalore" class="popular-city rounded-full bg-white/20 px-4 py-1 backdrop-blur transition hover:bg-white/30">Bangalore</button>
+          <button type="button" data-city="Delhi" class="popular-city rounded-full bg-white/20 px-4 py-1 backdrop-blur transition hover:bg-white/30">Delhi</button>
         </div>
       </div>
     </section>
 
-    <section class="panel-card mt-6 p-8 shadow-2xl">
+    <section class="mt-6 rounded-2xl bg-white p-5 shadow-md">
       <div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
         <input id="filterMinPrice" class="rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Min Price" type="number" />
         <input id="filterMaxPrice" class="rounded-xl border border-slate-200 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Max Price" type="number" />
@@ -144,9 +125,9 @@
       <p id="listMessage"></p>
     </section>
 
-    <section id="propertyList" class="mt-6 min-h-[36rem] grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"></section>
+    <section id="propertyList" class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"></section>
 
-    <section class="panel-card mt-10 p-8 shadow-2xl md:p-8">
+    <section class="mt-10 rounded-2xl bg-white p-5 shadow-md md:p-6">
       <div class="mb-4 flex items-center justify-between">
         <h2 class="text-2xl font-semibold">Housing's top picks</h2>
         <a href="#propertyList" class="text-sm font-semibold text-indigo-700 hover:underline">View all</a>
@@ -154,7 +135,7 @@
       <div id="topPicksList" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"></div>
     </section>
 
-    <section class="mt-8 rounded-[2rem] bg-white/95 p-8 shadow-2xl md:p-8">
+    <section class="mt-8 rounded-2xl bg-white p-5 shadow-md md:p-6">
       <div class="mb-4">
         <h2 class="text-2xl font-semibold">High-demand projects to invest now</h2>
         <p class="text-sm text-slate-500">Leading projects in high demand</p>
@@ -162,7 +143,7 @@
       <div id="highDemandList" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
     </section>
 
-    <section class="mt-8 rounded-[2rem] bg-white/95 p-8 shadow-2xl md:p-8">
+    <section class="mt-8 rounded-2xl bg-white p-5 shadow-md md:p-6">
       <div class="mb-4">
         <h2 class="text-2xl font-semibold">Explore by city</h2>
         <p class="text-sm text-slate-500">Jump into curated city-level inventory</p>
@@ -171,7 +152,7 @@
     </section>
 
     <div id="toolModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/40 p-4">
-      <div class="w-full max-w-md rounded-[2rem] bg-white/95 p-8 shadow-2xl">
+      <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
         <div class="mb-4 flex items-center justify-between">
           <h3 id="toolModalTitle" class="text-lg font-semibold">Calculator</h3>
           <button type="button" id="toolModalClose" class="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100">✕</button>
@@ -193,12 +174,5 @@
   <script src="../js/navbar.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/home.js"></script>
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <a class="site-footer__brand" href="./index.html">EstateHub</a>
-      <p>Real Estate Marketplace Demo</p>
-      <p class="site-footer__copyright">&copy; 2026 EstateHub. All rights reserved.</p>
-    </div>
-  </footer>
 </body>
 </html>

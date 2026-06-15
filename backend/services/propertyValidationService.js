@@ -70,8 +70,7 @@ function normalizePropertyPayload(payload) {
   const price = toNumber(payload.price, "price");
   const latitude = toNumber(payload.latitude, "latitude");
   const longitude = toNumber(payload.longitude, "longitude");
-  const bhkRaw = payload.bhk === undefined || payload.bhk === null ? "" : payload.bhk;
-  const bhk = bhkRaw === "" ? null : toNumber(bhkRaw, "bhk");
+  const bhk = toNumber(payload.bhk, "bhk");
   const areaSqft = toNumber(payload.area_sqft || payload.areaSqft, "area_sqft");
 
   if (price < 0) throw createValidationError("price must be greater than or equal to 0.");
@@ -79,7 +78,7 @@ function normalizePropertyPayload(payload) {
     throw createValidationError("latitude must be between -90 and 90.");
   if (longitude < -180 || longitude > 180)
     throw createValidationError("longitude must be between -180 and 180.");
-  if (bhk !== null && (!Number.isInteger(bhk) || bhk < 1 || bhk > 20))
+  if (!Number.isInteger(bhk) || bhk < 1 || bhk > 20)
     throw createValidationError("bhk must be an integer between 1 and 20.");
   if (!Number.isInteger(areaSqft) || areaSqft < 100)
     throw createValidationError("area_sqft must be an integer greater than or equal to 100.");

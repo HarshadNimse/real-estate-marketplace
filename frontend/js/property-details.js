@@ -33,10 +33,8 @@ async function loadPropertyDetails() {
     document.getElementById("propertyPrice").textContent = `INR ${Number(
       property.price
     ).toLocaleString("en-IN")}`;
-    const metaParts = [property.city];
-    if (property.bhk) metaParts.push(`${property.bhk} BHK`);
-    metaParts.push(property.property_type);
-    document.getElementById("propertyMeta").textContent = metaParts.filter(Boolean).join(" | ");
+    document.getElementById("propertyMeta").textContent =
+      `${property.city} | ${property.bhk} BHK | ${property.property_type}`;
     document.getElementById("propertyDescription").textContent = property.description;
     document.getElementById("amenitiesList").innerHTML = renderAmenities(property.amenities);
 
@@ -75,17 +73,8 @@ async function loadPropertyDetails() {
     }
     document.getElementById("contactForm").dataset.propertyId = property.id;
 
-    const contactForm = document.getElementById("contactForm");
-    const currentUser = auth.getUser();
-    if (contactForm) {
-      if (currentUser?.role === "buyer") {
-        contactForm.classList.remove("hidden");
-      } else {
-        contactForm.classList.add("hidden");
-      }
-    }
-
     const favBtn = document.getElementById("favBtn");
+    const currentUser = auth.getUser();
     if (favBtn && currentUser && currentUser.role === "buyer") {
       favBtn.classList.remove("hidden");
       
@@ -131,8 +120,6 @@ async function loadPropertyDetails() {
     ui.setLoading("detailsLoading", false);
   }
 }
-
-document.getElementById("logoutBtn")?.addEventListener("click", () => auth.logout("./login.html"));
 
 document.getElementById("contactForm")?.addEventListener("submit", async (event) => {
   event.preventDefault();

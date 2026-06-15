@@ -1,5 +1,6 @@
 const { pool } = require("../config/db");
 const { countTotalPropertyViews } = require("../models/propertyViewModel");
+const { getSetting, updateSetting } = require("../models/settingModel");
 
 async function listUsers(req, res, next) {
   try {
@@ -143,4 +144,45 @@ async function getPropertyDetail(req, res, next) {
   }
 }
 
-module.exports = { listUsers, toggleUserStatus, adminStats, getPropertyDetail };
+async function getAdminSettings(req, res, next) {
+  try {
+    const platform_commission = await getSetting("platform_commission") || "5.0";
+    return res.status(200).json({
+      success: true,
+      data: { platform_commission },
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+async function updateAdminSettings(req, res, next) {
+  try {
+    const { platform_commission } = req.body;
+    if (platform_commission !== undefined) {
+      const parsedVal = parseFloat(platform_commission);
+      if (isNaN(parsedVal) || parsedVal < 0 || parsedVal > 100) {
+        return res.status(400).json({
+          success: false,
+          message: "Platform commission must be a valid percentage between 0 and 100.",
+        });
+      }
+      await updateSetting("platform_commission", String(parsedVal));
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Admin settings updated successfully.",
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+module.exports = {
+  listUsers,
+  toggleUserStatus,
+  adminStats,
+  getPropertyDetail,
+  getAdminSettings,
+  updateAdminSettings,
+};

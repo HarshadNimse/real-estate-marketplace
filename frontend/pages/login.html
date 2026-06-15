@@ -3,17 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login &mdash; EstateHub</title>
-  <link rel="stylesheet" href="../css/tailwind.css" />
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body class="min-h-screen px-4 py-10 text-white auth-background">
-  <main class="mx-auto max-w-md px-2">
-    <section class="mx-auto rounded-[2rem] auth-panel p-10">
-      <a href="./index.html" class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-100 hover:text-white hover:underline">
-        ← Back to Home
-      </a>
-      <h2 class="mt-4 text-2xl font-semibold">Welcome Back</h2>
+<body class="min-h-screen bg-gradient-to-br from-purple-700 via-indigo-700 to-slate-900 px-4 py-10 text-slate-100">
+  <main class="mx-auto max-w-md">
+    <section class="rounded-2xl bg-white/10 p-6 shadow-xl backdrop-blur">
+      <h2 class="text-2xl font-semibold">Welcome Back</h2>
       <p class="mt-1 text-sm text-indigo-100">Login to continue your property journey.</p>
       <form id="loginForm">
         <div class="mt-5 space-y-4">
@@ -33,15 +30,7 @@
   <script src="../js/config.js"></script>
   <script src="../js/api.js"></script>
   <script src="../js/auth.js"></script>
-  <script src="../js/navbar.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/login.js"></script>
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <a class="site-footer__brand" href="./index.html">EstateHub</a>
-      <p>Real Estate Marketplace Demo</p>
-      <p class="site-footer__copyright">&copy; 2026 EstateHub. All rights reserved.</p>
-    </div>
-  </footer>
 </body>
 </html>

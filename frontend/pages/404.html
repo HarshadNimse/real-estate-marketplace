@@ -4,42 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Page Not Found — EstateHub</title>
-  <link rel="stylesheet" href="../css/tailwind.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body class="min-h-screen text-slate-900 auth-background">
-  <header class="sticky top-0 z-50 border-b border-white/20 bg-white/70 backdrop-blur-lg">
+<body class="flex min-h-screen flex-col bg-gradient-to-b from-slate-50 to-indigo-50 text-slate-800">
+  <header class="border-b border-white/30 bg-white/70 backdrop-blur-lg">
     <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
       <a href="./index.html" class="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-2xl font-bold text-transparent">EstateHub</a>
       <a href="./index.html" class="rounded-lg px-3 py-2 text-sm font-medium text-indigo-700 transition hover:bg-indigo-50">Home</a>
     </nav>
   </header>
-  <main class="mx-auto flex min-h-[calc(100vh-80px)] items-center justify-center px-4 py-10">
-    <div class="panel-card light w-full max-w-3xl rounded-[2rem] p-10 text-center shadow-2xl">
-      <div class="inline-flex rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 ring-1 ring-indigo-100">
-        EstateHub error page
-      </div>
-      <p class="mt-6 text-7xl font-bold tracking-tight text-indigo-700">404</p>
-      <h1 class="mt-4 text-3xl font-semibold text-slate-900">Page not found</h1>
-      <p class="mx-auto mt-4 max-w-xl text-sm text-slate-600">
-        The page you are looking for doesn’t exist or may have been moved. Return to the homepage and continue exploring listings.
-      </p>
-      <a href="./index.html" class="mt-8 inline-flex rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-3 text-sm font-semibold text-white shadow-lg transition hover:opacity-95">
-        Back to home
-      </a>
-    </div>
+  <main class="mx-auto flex flex-1 flex-col items-center justify-center px-4 py-16 text-center">
+    <p class="text-6xl font-bold text-indigo-200">404</p>
+    <h1 class="mt-4 text-2xl font-semibold text-slate-800">Page not found</h1>
+    <p class="mt-2 max-w-md text-sm text-slate-600">
+      The page you are looking for does not exist or may have been moved.
+    </p>
+    <a
+      href="./index.html"
+      class="mt-8 inline-flex rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:opacity-90"
+    >
+      Back to home
+    </a>
   </main>
-  <script src="../js/config.js"></script>
-  <script src="../js/api.js"></script>
-  <script src="../js/auth.js"></script>
-  <script src="../js/navbar.js"></script>
-  <script src="../js/ui.js"></script>
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <a class="site-footer__brand" href="./index.html">EstateHub</a>
-      <p>Real Estate Marketplace Demo</p>
-      <p class="site-footer__copyright">&copy; 2026 EstateHub. All rights reserved.</p>
-    </div>
-  </footer>
 </body>
 </html>

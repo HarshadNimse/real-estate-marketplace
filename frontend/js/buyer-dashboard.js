@@ -1,9 +1,11 @@
 const buyerState = { limit: 10, offset: 0, total: 0 };
 
 function buyerInquiryActions(item) {
-  if (item.status === "closed") return "";
+  const chatButton = `<button type="button" class="buyer-chat-inquiry rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100" data-inquiry-id="${item.id}" data-title="${ui.escapeHtml(item.property_title)}" data-seller="${ui.escapeHtml(item.seller_name)}" data-status="${item.status}">Chat</button>`;
+  if (item.status === "closed") return `<div class="mt-3 flex flex-wrap gap-2">${chatButton}</div>`;
   return `
     <div class="mt-3 flex flex-wrap gap-2">
+      ${chatButton}
       <button type="button" class="buyer-close-inquiry rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50" data-inquiry-id="${item.id}">Close inquiry</button>
     </div>`;
 }
@@ -19,7 +21,6 @@ async function loadBuyerInquiries() {
     const response = await api.request(`/inquiries/buyer?${query}`);
     const { inquiries, pagination } = response.data;
     buyerState.total = pagination.total;
-    ui.setText("buyerStatInquiries", Number(pagination.total || 0).toLocaleString("en-IN"));
 
     const e = ui.escapeHtml;
     document.getElementById("buyerInquiryList").innerHTML = inquiries.length
@@ -46,62 +47,27 @@ async function loadBuyerInquiries() {
   }
 }
 
-function renderSavedProperties(properties) {
-  const root = document.getElementById("buyerSavedProperties");
-  if (!root) return;
-  const e = ui.escapeHtml;
-  root.innerHTML = properties.length
-    ? properties
-        .map(
-          (item) => `
-            <article class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-              <img loading="lazy" class="h-40 w-full object-cover" src="${ui.safeImageSrc(
-                item.primary_image_url
-              )}" alt="${e(item.title)}" onerror="this.onerror=null;this.src='${ui.PLACEHOLDER_IMAGE}';" />
-              <div class="space-y-2 p-4">
-                <h4 class="line-clamp-1 font-semibold text-slate-800">${e(item.title)}</h4>
-                <p class="text-sm text-slate-500">${e(item.city)} | ${e(item.property_type)}</p>
-                <p class="font-semibold text-indigo-700">INR ${Number(item.price).toLocaleString("en-IN")}</p>
-                <div class="flex flex-wrap gap-2">
-                  <a class="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-500" href="./property.html?slug=${encodeURIComponent(
-                    item.slug || ""
-                  )}">View details</a>
-                  <button type="button" class="buyer-remove-saved rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-50" data-property-id="${Number(
-                    item.id
-                  )}">Remove</button>
-                </div>
-              </div>
-            </article>`
-        )
-        .join("")
-    : `<p class="col-span-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-500">No saved properties yet. Save listings from the home or property details page.</p>`;
-}
-
-async function loadSavedProperties() {
-  ui.setLoading("buyerSavedLoading", true, "Loading saved properties...");
-  try {
-    const response = await api.request("/favourites");
-    const properties = Array.isArray(response.data?.properties) ? response.data.properties : [];
-    ui.setText("buyerStatSaved", properties.length.toLocaleString("en-IN"));
-    renderSavedProperties(properties);
-  } catch (error) {
-    ui.setText("buyerStatSaved", "—");
-    ui.setMessage("buyerSavedMessage", error.message, true);
-  } finally {
-    ui.setLoading("buyerSavedLoading", false);
-  }
-}
-
 document.getElementById("buyerInquiryList")?.addEventListener("click", async (event) => {
-  const btn = event.target.closest(".buyer-close-inquiry");
-  if (!btn) return;
-  const inquiryId = Number(btn.dataset.inquiryId);
+  const closeBtn = event.target.closest(".buyer-close-inquiry");
+  const chatBtn = event.target.closest(".buyer-chat-inquiry");
+
+  if (chatBtn) {
+    const inquiryId = Number(chatBtn.dataset.inquiryId);
+    const title = chatBtn.dataset.title;
+    const seller = chatBtn.dataset.seller;
+    const status = chatBtn.dataset.status;
+    openChatModal(inquiryId, title, seller, status);
+    return;
+  }
+
+  if (!closeBtn) return;
+  const inquiryId = Number(closeBtn.dataset.inquiryId);
   if (!inquiryId) return;
   if (!window.confirm("Close this inquiry?")) return;
 
-  const prev = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = "Closing...";
+  const prev = closeBtn.textContent;
+  closeBtn.disabled = true;
+  closeBtn.textContent = "Closing...";
   try {
     await api.request(`/inquiries/${inquiryId}/status`, {
       method: "PATCH",
@@ -112,27 +78,110 @@ document.getElementById("buyerInquiryList")?.addEventListener("click", async (ev
   } catch (error) {
     ui.showToast(error.message, "error");
   } finally {
-    btn.disabled = false;
-    btn.textContent = prev;
+    closeBtn.disabled = false;
+    closeBtn.textContent = prev;
   }
 });
 
-document.getElementById("buyerSavedProperties")?.addEventListener("click", async (event) => {
-  const btn = event.target.closest(".buyer-remove-saved");
-  if (!btn) return;
-  const propertyId = Number(btn.dataset.propertyId);
-  if (!propertyId) return;
+let activeInquiryId = null;
+let chatInterval = null;
+let activeInquiryStatus = null;
 
-  btn.disabled = true;
-  btn.textContent = "Removing...";
+function openChatModal(inquiryId, title, secondPartyName, status) {
+  activeInquiryId = inquiryId;
+  activeInquiryStatus = status;
+  
+  const modal = document.getElementById("chatModal");
+  document.getElementById("chatTitle").textContent = title;
+  document.getElementById("chatSubtitle").textContent = `Chatting with owner: ${secondPartyName}`;
+  
+  const chatForm = document.getElementById("chatForm");
+  const chatInput = document.getElementById("chatInput");
+  
+  if (status === "closed") {
+    chatInput.disabled = true;
+    chatInput.placeholder = "Inquiry is closed. Read-only history.";
+    chatForm.querySelector("button[type='submit']").disabled = true;
+  } else {
+    chatInput.disabled = false;
+    chatInput.placeholder = "Type your message...";
+    chatForm.querySelector("button[type='submit']").disabled = false;
+  }
+  
+  modal.classList.remove("hidden");
+  
+  loadChatMessages();
+  clearInterval(chatInterval);
+  chatInterval = setInterval(loadChatMessages, 4000);
+}
+
+function closeChatModal() {
+  document.getElementById("chatModal").classList.add("hidden");
+  activeInquiryId = null;
+  clearInterval(chatInterval);
+}
+
+document.getElementById("closeChatBtn")?.addEventListener("click", closeChatModal);
+
+async function loadChatMessages() {
+  if (!activeInquiryId) return;
   try {
-    await api.request(`/favourites/${propertyId}`, { method: "DELETE" });
-    ui.showToast("Removed from saved properties.", "success");
-    await loadSavedProperties();
-  } catch (error) {
-    btn.disabled = false;
-    btn.textContent = "Remove";
-    ui.showToast(error.message, "error");
+    const res = await api.request(`/inquiries/${activeInquiryId}/messages`);
+    const messages = res.data.messages || [];
+    const chatContainer = document.getElementById("chatMessages");
+    const e = ui.escapeHtml;
+    const currentUser = auth.getUser();
+    
+    chatContainer.innerHTML = messages.length
+      ? messages.map(msg => {
+          const isMe = Number(msg.sender_id) === Number(currentUser.id);
+          const alignClass = isMe ? "justify-end" : "justify-start";
+          const bgClass = isMe ? "bg-indigo-600 text-white rounded-br-none" : "bg-slate-200 text-slate-800 rounded-bl-none";
+          return `
+            <div class="flex ${alignClass}">
+              <div class="max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm ${bgClass}">
+                ${isMe ? "" : `<div class="text-[10px] font-semibold opacity-75 mb-1">${e(msg.sender_name)}</div>`}
+                <div class="break-words">${e(msg.message)}</div>
+                <div class="text-[9px] text-right mt-1 opacity-60">${new Date(msg.created_at).toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' })}</div>
+              </div>
+            </div>
+          `;
+        }).join("")
+      : `<div class="text-center py-8 text-xs text-slate-400">No messages yet. Send a message to start the conversation!</div>`;
+      
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  } catch (err) {
+    console.error("Failed to load messages:", err.message);
+  }
+}
+
+document.getElementById("chatForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!activeInquiryId || activeInquiryStatus === "closed") return;
+  
+  const input = document.getElementById("chatInput");
+  const msgText = input.value.trim();
+  if (!msgText) return;
+  
+  const submitBtn = event.target.querySelector("button[type='submit']");
+  submitBtn.disabled = true;
+  input.disabled = true;
+  
+  try {
+    await api.request(`/inquiries/${activeInquiryId}/messages`, {
+      method: "POST",
+      body: JSON.stringify({ message: msgText }),
+    });
+    input.value = "";
+    await loadChatMessages();
+    
+    if (window.loadBuyerInquiries) loadBuyerInquiries();
+  } catch (err) {
+    ui.showToast(err.message, "error");
+  } finally {
+    submitBtn.disabled = false;
+    input.disabled = false;
+    input.focus();
   }
 });
 
@@ -156,7 +205,5 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
   const user = auth.requireAuth(["buyer"]);
   if (!user) return;
   ui.setText("buyerName", user.full_name);
-  ui.setText("buyerStatViews", "—");
   loadBuyerInquiries();
-  loadSavedProperties();
 })();

@@ -137,6 +137,36 @@ async function getBuyerHistory(buyerId, pagination, executor) {
   return { rows, total };
 }
 
+async function createMessage(inquiryId, senderId, message, executor) {
+  const db = getExecutor(executor);
+  const [result] = await db.execute(
+    "INSERT INTO inquiry_messages (inquiry_id, sender_id, message) VALUES (?, ?, ?)",
+    [inquiryId, senderId, message]
+  );
+  return result.insertId;
+}
+
+async function getMessages(inquiryId, executor) {
+  const db = getExecutor(executor);
+  const [rows] = await db.execute(
+    `SELECT im.id, im.inquiry_id, im.sender_id, im.message, im.created_at, u.full_name as sender_name
+     FROM inquiry_messages im
+     INNER JOIN users u ON im.sender_id = u.id
+     WHERE im.inquiry_id = ?
+     ORDER BY im.created_at ASC`,
+    [inquiryId]
+  );
+  return rows;
+}
+
+async function updateInquiryLastMessageAt(inquiryId, executor) {
+  const db = getExecutor(executor);
+  await db.execute(
+    "UPDATE inquiries SET last_message_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+    [inquiryId]
+  );
+}
+
 module.exports = {
   createInquiry,
   findInquiryById,
@@ -144,4 +174,7 @@ module.exports = {
   updateInquiryStatus,
   getSellerInbox,
   getBuyerHistory,
+  createMessage,
+  getMessages,
+  updateInquiryLastMessageAt,
 };

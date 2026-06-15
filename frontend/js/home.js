@@ -242,10 +242,10 @@ function renderTopPicks(properties) {
           const image = ui.safeImageSrc(item.primary_image_url);
           return `
             <article class="overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:shadow-md">
-              <img loading="lazy" class="h-32 w-full object-cover" src="${image}" alt="${ui.escapeHtml(item.title)}" onerror="this.onerror=null;this.src='${ui.PLACEHOLDER_IMAGE}';" />
+              <img class="h-32 w-full object-cover" src="${image}" alt="${ui.escapeHtml(item.title)}" onerror="this.onerror=null;this.src='${ui.PLACEHOLDER_IMAGE}';" />
               <div class="space-y-1 p-3">
                 <h3 class="line-clamp-1 text-sm font-semibold text-slate-800">${ui.escapeHtml(item.title)}</h3>
-                <p class="text-xs text-slate-500">${ui.escapeHtml(item.city)}${item.bhk ? ` | ${ui.escapeHtml(item.bhk)} BHK` : ""}</p>
+                <p class="text-xs text-slate-500">${ui.escapeHtml(item.city)} | ${ui.escapeHtml(item.bhk)} BHK</p>
                 <p class="text-base font-semibold text-indigo-700">INR ${Number(item.price).toLocaleString("en-IN")}</p>
                 <a class="text-xs font-semibold text-indigo-600 hover:underline" href="./property.html?slug=${encodeURIComponent(item.slug || "")}">View details</a>
               </div>
@@ -269,7 +269,7 @@ function renderHighDemand(properties) {
           const image = ui.safeImageSrc(item.primary_image_url);
           return `
             <article class="flex gap-3 rounded-xl border border-slate-200 bg-white p-3 transition hover:shadow-md">
-              <img loading="lazy" class="h-24 w-24 rounded-lg object-cover" src="${image}" alt="${ui.escapeHtml(item.title)}" onerror="this.onerror=null;this.src='${ui.PLACEHOLDER_IMAGE}';" />
+              <img class="h-24 w-24 rounded-lg object-cover" src="${image}" alt="${ui.escapeHtml(item.title)}" onerror="this.onerror=null;this.src='${ui.PLACEHOLDER_IMAGE}';" />
               <div class="min-w-0 flex-1 space-y-1">
                 <h3 class="line-clamp-1 font-semibold text-slate-800">${ui.escapeHtml(item.title)}</h3>
                 <p class="line-clamp-1 text-xs text-slate-500">${ui.escapeHtml(item.city)} • ${ui.escapeHtml(item.property_type)}</p>
@@ -314,30 +314,22 @@ async function loadProperties() {
   setControlsDisabled(true);
   ui.setLoading("listLoading", true);
   ui.setMessage("listMessage", "");
-  const listRoot = document.getElementById("propertyList");
-  if (listRoot) {
-    listRoot.innerHTML = ui.propertySkeletons(6);
-  }
   try {
     const query = api.buildQuery(collectFilters());
     const response = await api.request(`/properties?${query}`);
-    const data = response.data || {};
-    const properties = Array.isArray(data.properties) ? data.properties : [];
-    state.total = Number(data.pagination?.total || properties.length);
-    state.latestProperties = properties;
-    document.getElementById("propertyList").innerHTML = properties.length
-      ? properties.map(ui.propertyCard).join("")
+    const data = response.data;
+    state.total = data.pagination.total;
+    state.latestProperties = data.properties || [];
+    document.getElementById("propertyList").innerHTML = data.properties.length
+      ? data.properties.map(ui.propertyCard).join("")
       : `<p class="col-span-full rounded-xl bg-white p-6 text-center text-sm text-slate-500 shadow">No properties found. Try adjusting filters.</p>`;
-    renderTopPicks(properties);
-    renderHighDemand(properties);
-    renderCityShowcase(properties);
     const currentUser = auth.getUser();
     document.querySelectorAll(".list-fav-btn").forEach((btn) => {
       btn.classList.toggle("hidden", !currentUser || currentUser.role !== "buyer");
     });
-    if (currentUser?.role === "buyer") {
-      await syncListFavouriteButtons();
-    }
+    renderTopPicks(state.latestProperties);
+    renderHighDemand(state.latestProperties);
+    renderCityShowcase(state.latestProperties);
     if (state.total === 0) ui.setText("pageInfo", "Showing 0 of 0");
     else {
       ui.setText(
@@ -468,40 +460,16 @@ document.getElementById("logoutBtn")?.addEventListener("click", () => {
   window.location.reload();
 });
 
-async function syncListFavouriteButtons() {
-  try {
-    const favRes = await api.request("/favourites");
-    const favIds = new Set(
-      (favRes.data?.properties || []).map((p) => Number(p.id))
-    );
-    document.querySelectorAll(".list-fav-btn").forEach((btn) => {
-      const id = Number(btn.dataset.propertyId);
-      const saved = favIds.has(id);
-      btn.dataset.fav = saved ? "true" : "false";
-      btn.textContent = saved ? "♥ Saved" : "♡ Save";
-      btn.classList.toggle("text-rose-600", saved);
-    });
-  } catch (e) {
-    console.warn("Failed to sync favourite buttons:", e.message);
-  }
-}
-
 document.getElementById("propertyList")?.addEventListener("click", async (event) => {
   const btn = event.target.closest(".list-fav-btn");
   if (!btn) return;
   const propertyId = Number(btn.dataset.propertyId);
   if (!propertyId) return;
-  const isFav = btn.dataset.fav === "true";
-  const method = isFav ? "DELETE" : "POST";
   try {
-    await api.request(`/favourites/${propertyId}`, { method });
-    btn.dataset.fav = isFav ? "false" : "true";
-    btn.textContent = isFav ? "♡ Save" : "♥ Saved";
-    btn.classList.toggle("text-rose-600", !isFav);
-    ui.showToast(
-      isFav ? "Removed from favourites." : "Added to favourites.",
-      "success"
-    );
+    await api.request(`/favourites/${propertyId}`, { method: "POST" });
+    btn.textContent = "♥ Saved";
+    btn.classList.add("text-rose-600");
+    ui.showToast("Added to favourites.", "success");
   } catch (error) {
     ui.showToast(error.message, "error");
   }
@@ -587,13 +555,9 @@ function setupMobileMenu() {
         return;
       }
 
-      mobileMegaMenuContent.innerHTML = `
-        <button type="button" id="mobileMegaMenuBack" class="mb-3 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50">
-          ← Back
-        </button>
-        ${sections
-          .map(
-            (section) => `
+      mobileMegaMenuContent.innerHTML = sections
+        .map(
+          (section) => `
           <section>
             <h4 class="mb-2 text-sm font-semibold text-slate-700">${ui.escapeHtml(section.title)}</h4>
             <ul class="space-y-1 text-sm text-slate-600">
@@ -607,15 +571,10 @@ function setupMobileMenu() {
                 .join("")}
             </ul>
           </section>`
-          )
-          .join("")}`;
+        )
+        .join("");
 
       mobileMegaMenuPanel.classList.remove("hidden");
-
-      document.getElementById("mobileMegaMenuBack")?.addEventListener("click", () => {
-        mobileMegaMenuPanel.classList.add("hidden");
-        mobileMegaMenuContent.innerHTML = "";
-      });
     });
   });
 

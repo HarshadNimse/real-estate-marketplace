@@ -40,21 +40,3 @@ test("normalizePropertyPayload rejects invalid furnishing", () => {
     /furnishing/
   );
 });
-
-test("normalizePropertyPayload allows missing bhk", () => {
-  const normalized = normalizePropertyPayload({
-    title: "Plot in Pune",
-    description: "Open land near highway.",
-    city: "Pune",
-    property_type: "sale",
-    price: 1200000,
-    latitude: 18,
-    longitude: 73,
-    area_sqft: 1200,
-    furnishing: "unfurnished",
-  });
-
-  assert.equal(normalized.bhk, null);
-  assert.equal(normalized.city, "Pune");
-  assert.equal(normalized.propertyType, "sale");
-});

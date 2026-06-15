@@ -3,6 +3,8 @@ const {
   getSellerInquiries,
   getBuyerInquiries,
   updateInquiryStatusByRole,
+  createInquiryMessage,
+  getMessagesByInquiry,
 } = require("../services/inquiryService");
 
 async function createInquiry(req, res, next) {
@@ -61,9 +63,41 @@ async function updateInquiryStatus(req, res, next) {
   }
 }
 
+async function sendInquiryMessage(req, res, next) {
+  try {
+    const { message } = req.body;
+    if (!message || !message.trim()) {
+      return res.status(400).json({ success: false, message: "Message content is required." });
+    }
+    const newMessage = await createInquiryMessage(req.user, req.params.id, message);
+    return res.status(201).json({
+      success: true,
+      message: "Message sent successfully.",
+      data: { message: newMessage },
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+async function getInquiryMessages(req, res, next) {
+  try {
+    const data = await getMessagesByInquiry(req.user, req.params.id);
+    return res.status(200).json({
+      success: true,
+      message: "Messages fetched successfully.",
+      data,
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 module.exports = {
   createInquiry,
   getSellerInbox,
   getBuyerHistory,
   updateInquiryStatus,
+  sendInquiryMessage,
+  getInquiryMessages,
 };

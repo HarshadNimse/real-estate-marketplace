@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Profile — EstateHub</title>
-  <link rel="stylesheet" href="../css/tailwind.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900">
-  <header class="sticky top-0 z-50 border-b border-white/30 bg-white/80 backdrop-blur-lg">
+<body class="min-h-screen bg-gradient-to-b from-slate-50 to-indigo-50 text-slate-800">
+  <header class="sticky top-0 z-50 border-b border-white/30 bg-white/70 backdrop-blur-lg">
     <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
       <a href="./index.html" class="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-xl font-bold text-transparent">EstateHub</a>
       <div class="flex items-center gap-3">
@@ -19,9 +19,9 @@
     </nav>
   </header>
 
-  <main class="mx-auto max-w-6xl space-y-8 px-6 py-10 md:px-8">
-    <div class="panel-card rounded-[2rem] p-10">
-      <div class="mb-6 flex flex-col gap-6 rounded-[2rem] bg-slate-50 p-6 shadow-inner sm:flex-row sm:items-center sm:justify-between">
+  <main class="mx-auto max-w-2xl space-y-6 px-4 py-8 md:px-6">
+    <div class="rounded-2xl bg-white p-6 shadow-md">
+      <div class="mb-6 flex items-center gap-4">
         <div class="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-2xl font-bold text-white" id="avatarInitials">?</div>
         <div>
           <h1 class="text-xl font-semibold" id="profileName">Loading...</h1>
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <div class="panel-card rounded-[2rem] p-10">
+    <div class="rounded-2xl bg-white p-6 shadow-md">
       <h2 class="mb-3 text-base font-semibold">Change password</h2>
       <div id="passwordMessage" class="hidden rounded-xl p-3 text-sm mb-4"></div>
       <div class="space-y-4">
@@ -71,7 +71,7 @@
       </div>
     </div>
 
-    <div class="panel-card rounded-[2rem] p-10" id="favouritesSection">
+    <div class="rounded-2xl bg-white p-6 shadow-md" id="favouritesSection">
       <h2 class="mb-3 text-base font-semibold">Saved properties</h2>
       <ul id="favouritesList" class="space-y-3">
         <li class="text-sm text-slate-500">Loading...</li>
@@ -82,8 +82,8 @@
   <script src="../js/config.js"></script>
   <script src="../js/api.js"></script>
   <script src="../js/auth.js"></script>
-  <script src="../js/navbar.js"></script>
   <script src="../js/ui.js"></script>
+  <script src="../js/navbar.js"></script>
   <script>
     // Enforce authentication
     (function() {
@@ -93,12 +93,5 @@
     })();
   </script>
   <script src="../js/profile.js"></script>
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <a class="site-footer__brand" href="./index.html">EstateHub</a>
-      <p>Real Estate Marketplace Demo</p>
-      <p class="site-footer__copyright">&copy; 2026 EstateHub. All rights reserved.</p>
-    </div>
-  </footer>
 </body>
 </html>

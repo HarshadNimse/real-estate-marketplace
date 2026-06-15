@@ -1,4 +1,3 @@
-const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -70,16 +69,6 @@ app.use("/api/admin", adminRouter);
 app.use("/api/properties", propertyRouter);
 app.use("/api/inquiries", inquiryRouter);
 app.use("/api/favourites", favRouter);
-
-const frontendRoot = path.join(__dirname, "../frontend");
-const frontendPages = path.join(frontendRoot, "pages");
-app.use("/css", express.static(path.join(frontendRoot, "css")));
-app.use("/js", express.static(path.join(frontendRoot, "js")));
-app.use(express.static(frontendPages, { index: "index.html" }));
-app.get(/^\/(?!api).*/, (req, res, next) => {
-  if (req.path.startsWith("/api")) return next();
-  res.status(404).sendFile(path.join(frontendPages, "404.html"));
-});
 
 app.use(notFound);
 app.use(errorHandler);

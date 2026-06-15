@@ -8,9 +8,7 @@ const {
   deleteProperty,
   updatePropertyStatus,
   getMyPropertyListings,
-  getMyPropertyDashboardStats,
   getAdminProperties,
-  deletePropertyImage,
 } = require("../controllers/propertyController");
 const { requireAuth, attachUserIfPresent } = require("../middlewares/authMiddleware");
 const { requireRole } = require("../middlewares/roleMiddleware");
@@ -19,7 +17,6 @@ const { upload } = require("../middlewares/uploadMiddleware");
 const propertyRouter = express.Router();
 
 propertyRouter.get("/", getProperties);
-propertyRouter.get("/mine/stats", requireAuth, requireRole("seller"), getMyPropertyDashboardStats);
 propertyRouter.get("/mine", requireAuth, requireRole("seller"), getMyPropertyListings);
 propertyRouter.get("/admin/all", requireAuth, requireRole("admin"), getAdminProperties);
 propertyRouter.get("/slug/:slug", attachUserIfPresent, getPropertyBySlug);
@@ -39,13 +36,6 @@ propertyRouter.put(
   requireRole("seller", "admin"),
   upload.array("images", 10),
   updateProperty
-);
-
-propertyRouter.delete(
-  "/:id/images/:imgId",
-  requireAuth,
-  requireRole("seller", "admin"),
-  deletePropertyImage
 );
 
 propertyRouter.delete(

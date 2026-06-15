@@ -4,6 +4,8 @@ const {
   getSellerInbox,
   getBuyerHistory,
   updateInquiryStatus,
+  sendInquiryMessage,
+  getInquiryMessages,
 } = require("../controllers/inquiryController");
 const { requireAuth } = require("../middlewares/authMiddleware");
 const { requireRole } = require("../middlewares/roleMiddleware");
@@ -18,6 +20,18 @@ inquiryRouter.patch(
   requireAuth,
   requireRole("buyer", "seller"),
   updateInquiryStatus
+);
+inquiryRouter.post(
+  "/:id/messages",
+  requireAuth,
+  requireRole("buyer", "seller"),
+  sendInquiryMessage
+);
+inquiryRouter.get(
+  "/:id/messages",
+  requireAuth,
+  requireRole("buyer", "seller"),
+  getInquiryMessages
 );
 
 module.exports = inquiryRouter;

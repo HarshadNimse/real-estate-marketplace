@@ -2,10 +2,10 @@ USE real_estate_marketplace;
 
 INSERT INTO users (full_name, email, phone, password_hash, role, is_active, email_verified)
 VALUES
-  ('Admin User', 'admin@example.com', '9990000001', '$2b$12$2TRMbem9SjrfFqO9TyZecu4GQnw.X03x89Dik3FuvmkC4pK9JYQHK', 'admin', 1, 1),
-  ('Seller One', 'seller1@example.com', '9990000002', '$2b$12$2TRMbem9SjrfFqO9TyZecu4GQnw.X03x89Dik3FuvmkC4pK9JYQHK', 'seller', 1, 1),
-  ('Seller Two', 'seller2@example.com', '9990000003', '$2b$12$2TRMbem9SjrfFqO9TyZecu4GQnw.X03x89Dik3FuvmkC4pK9JYQHK', 'seller', 1, 1),
-  ('Buyer One', 'buyer1@example.com', '9990000004', '$2b$12$2TRMbem9SjrfFqO9TyZecu4GQnw.X03x89Dik3FuvmkC4pK9JYQHK', 'buyer', 1, 1)
+  ('Arjun Mehta', 'admin@example.com', '9990000001', '$2b$12$2TRMbem9SjrfFqO9TyZecu4GQnw.X03x89Dik3FuvmkC4pK9JYQHK', 'admin', 1, 1),
+  ('Aniket Deshmukh', 'seller1@example.com', '9990000002', '$2b$12$2TRMbem9SjrfFqO9TyZecu4GQnw.X03x89Dik3FuvmkC4pK9JYQHK', 'seller', 1, 1),
+  ('Vikram Joshi', 'seller2@example.com', '9990000003', '$2b$12$2TRMbem9SjrfFqO9TyZecu4GQnw.X03x89Dik3FuvmkC4pK9JYQHK', 'seller', 1, 1),
+  ('Priya Sharma', 'buyer1@example.com', '9990000004', '$2b$12$2TRMbem9SjrfFqO9TyZecu4GQnw.X03x89Dik3FuvmkC4pK9JYQHK', 'buyer', 1, 1)
 ON DUPLICATE KEY UPDATE full_name = VALUES(full_name), phone = VALUES(phone), role = VALUES(role), is_active = 1;
 
 INSERT INTO properties (

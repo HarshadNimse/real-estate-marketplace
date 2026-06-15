@@ -9,7 +9,6 @@ const {
   updatePropertyStatus,
   listPublicProperties,
   listPropertiesBySellerId,
-  getSellerDashboardStats,
   listAdminProperties,
 } = require("../models/propertyModel");
 const {
@@ -17,9 +16,6 @@ const {
   replacePropertyImages,
   getPropertyImages,
   getPropertyPublicIds,
-  findPropertyImageById,
-  deletePropertyImageById,
-  countPropertyImages,
 } = require("../models/propertyImageModel");
 const { uploadPropertyImage, deletePropertyImage } = require("./cloudinaryService");
 const { recordPropertyView } = require("../models/propertyViewModel");
@@ -261,17 +257,6 @@ async function getMyProperties(user, query = {}) {
   };
 }
 
-async function getMyPropertyStats(user) {
-  if (user.role !== "seller") {
-    throw createError("Only sellers can access seller stats.", 403);
-  }
-  const stats = await getSellerDashboardStats(user.id);
-  const responseRate = stats.totalInquiries
-    ? Math.round((stats.respondedInquiries / stats.totalInquiries) * 100)
-    : 0;
-  return { ...stats, responseRate };
-}
-
 async function getAdminPropertyListings(user, query) {
   if (user.role !== "admin") {
     throw createError("Only admins can access all properties.", 403);
@@ -298,42 +283,6 @@ async function getAdminPropertyListings(user, query) {
   };
 }
 
-async function deletePropertyImageListing(propertyId, imageId, user) {
-  const property = await findPropertyById(propertyId);
-  if (!property || property.deleted_at) {
-    throw createError("Property not found.", 404);
-  }
-  if (!canManageProperty(user, property)) {
-    throw createError("You do not have permission to delete this image.", 403);
-  }
-
-  const image = await findPropertyImageById(propertyId, imageId);
-  if (!image) {
-    throw createError("Image not found.", 404);
-  }
-
-  await deletePropertyImageById(propertyId, imageId);
-  if (image.cloudinary_public_id) {
-    await deletePropertyImage(image.cloudinary_public_id);
-  }
-
-  const remaining = await countPropertyImages(propertyId);
-  if (remaining === 0) {
-    return { images: [] };
-  }
-
-  const images = await getPropertyImages(propertyId);
-  const hasPrimary = images.some((img) => Number(img.is_primary) === 1);
-  if (!hasPrimary && images.length) {
-    await pool.execute(
-      "UPDATE property_images SET is_primary = 1 WHERE id = ? AND property_id = ?",
-      [images[0].id, propertyId]
-    );
-  }
-
-  return { images: await getPropertyImages(propertyId) };
-}
-
 module.exports = {
   createPropertyListing,
   getPublicProperties,
@@ -343,7 +292,5 @@ module.exports = {
   softDeletePropertyListing,
   adminUpdatePropertyStatus,
   getMyProperties,
-  getMyPropertyStats,
   getAdminPropertyListings,
-  deletePropertyImageListing,
 };

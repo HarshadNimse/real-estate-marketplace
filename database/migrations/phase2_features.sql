@@ -2,10 +2,6 @@
 
 USE real_estate_marketplace;
 
--- Refresh token rotation / reuse detection (safe to re-run: ignore duplicate column error)
-ALTER TABLE refresh_tokens
-  ADD COLUMN used_at TIMESTAMP NULL DEFAULT NULL AFTER expires_at;
-
 -- Full-text search on listings
 ALTER TABLE properties
   ADD FULLTEXT INDEX ft_properties_title_description (title, description);

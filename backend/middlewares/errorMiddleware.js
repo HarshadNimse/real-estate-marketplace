@@ -5,17 +5,6 @@ function mapMysqlDriverError(err) {
   if (err.code === "ER_DUP_ENTRY") {
     return { statusCode: 409, message: "This record conflicts with an existing value." };
   }
-  if (
-    err.code === "ER_NO_SUCH_TABLE" ||
-    err.code === "ER_BAD_FIELD_ERROR" ||
-    err.code === "ER_BAD_TABLE_ERROR"
-  ) {
-    return {
-      statusCode: 500,
-      message:
-        "Database schema is missing or incomplete. Import database/schema.sql and apply migrations.",
-    };
-  }
   return {
     statusCode: 400,
     message: "Could not save data. Please verify your input and try again.",
